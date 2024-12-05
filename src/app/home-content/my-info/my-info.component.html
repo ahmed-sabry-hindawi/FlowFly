@@ -1,0 +1,143 @@
+<style type="text/css">
+    td {
+        margin: 30px !important;
+        padding: 30px !important;
+      }
+      
+      th {
+        margin: 30px !important;
+        padding: 30px !important;
+      }
+      
+      button {
+        margin: 10px !important;
+        padding: 10px !important;
+      }
+
+      .card {
+  margin: 30px !important;
+  padding: 30px !important;
+}
+</style>
+
+<div *ngIf="isDataLoaded">
+
+
+    <div class="col-12 row">
+        <div class="alert alert-danger response-message" *ngIf="errorMessage">
+            <p>
+                {{ errorMessage }}<mat-icon>cancel</mat-icon>
+            </p>
+        </div>
+        <div class="alert alert-success response-message" *ngIf="successMessage">
+
+            <p>
+                {{ successMessage }} <mat-icon>check_circle</mat-icon>
+            </p>
+        </div>
+    </div>
+    <div class="row col-12">
+        <div class="col-9">
+            <div class="card">
+                <!-- <div class="form-control" style="background-color: #f9f9f9;">
+                    <i class="fas fa-table me-1"></i>
+                    <h1 style="text-align: center;font-family: 'Bahij';">بياناتي </h1>
+                </div> -->
+                <!-- <br/><br/> -->
+                <div >
+                    <h3 class="section-header">
+                        بيانات المستخدم</h3>
+                        <br/>   
+
+                    <div class="row col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control ">
+                                <div class="col-6 control-header">الاسم</div>
+                                <div class="col-6 control-data">{{ this.user.fullName}}</div>
+                            </div>
+
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الرقم</div>
+                                <div class="col-6 control-data">{{ this.user.userId}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row  col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الإيميل</div>
+                                <div class="col-6 control-data">{{ this.user.userName}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">اسم المستخدم</div>
+                                <div class="col-6 control-data">{{ this.user.userName.split('@')[0]}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row  col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الجنسية</div>
+                                <div class="col-6 control-data">{{ this.user.nationality.name}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الجنس</div>
+                                <div class="col-6 control-data">{{ this.user.gender?'ذكر':'أنثى'}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row  col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الإدارة</div>
+                                <div class="col-6 control-data">{{ this.user.department.departmentName}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">المسمى</div>
+                                <div class="col-6 control-data">{{ this.user.jobTitle}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+        <div class="col-3" style="text-align: center;">
+            <div class="row col-12">
+                <div class="row card  svg-limited" style="border: 0px;">   
+                    <div style="align-content: center;">
+                        <img [src]="this.user.personalImage"    class="scaled-img" width="100px" style="border-radius:10%;"/>
+                    </div>                   
+                </div>           
+                <div class="row">
+                    <div class="card blue-card">
+                        <span style="width: 100%;">
+                            Be sure to train your wings continually , you don't know when you need to fly.
+                            The stronger your wings are, the higher and farther you can fly to where you deserve to be
+                        </span><br />
+                        <span style="font-family:Verdana, Geneva, Tahoma, sans-serif;font-weight: bold;">
+                            Khaled Tarboosh
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="col-xs-12" *ngIf="!isDataLoaded" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>

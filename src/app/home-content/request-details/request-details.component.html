@@ -1,0 +1,490 @@
+<style type="text/css">
+    td {
+        margin: 30px !important;
+        padding: 30px !important;
+    }
+
+    th {
+        margin: 30px !important;
+        padding: 30px !important;
+    }
+
+    button {
+        margin: 10px !important;
+        padding: 10px !important;
+    }
+
+    .card {
+        margin: 30px !important;
+        padding: 30px !important;
+    }
+</style>
+<div *ngIf="isDataLoaded">
+
+
+    <div class="col-12 row">
+        <div class="alert alert-danger response-message" *ngIf="errorMessage">
+            <p>
+                {{ errorMessage }}<mat-icon>cancel</mat-icon>
+            </p>
+        </div>
+        <div class="alert alert-success response-message" *ngIf="successMessage">
+
+            <p>
+                {{ successMessage }} <mat-icon>check_circle</mat-icon>
+            </p>
+        </div>
+    </div>
+    <div class="row col-12">
+        <div class="col-9">
+            <div class="card">
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <i class="fas fa-table me-1"></i>
+                    <h1 style="text-align: center;font-family: 'Bahij';">تفاصيل الطلب {{ this.requestDetails.requestId
+                        }} </h1>
+                </div>
+                <div class="card">
+                    <h3 class="section-header">
+                        بيانات مقدم الطلب</h3>
+
+                    <div class="row col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control ">
+                                <div class="col-6 control-header">مقدم الطلب</div>
+                                <div class="col-6 control-data">{{ this.requestDetails.user.fullName}}</div>
+                            </div>
+
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">رقمه</div>
+                                <div class="col-6 control-data">{{ this.requestDetails.user.userId}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row  col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الجنسية</div>
+                                <div class="col-6 control-data">{{ this.requestDetails.user.nationality.name}}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الجنس</div>
+                                <div class="col-6 control-data">{{ this.requestDetails.user.gender?'ذكر':'أنثى'}}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row  col-12">
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">الإدارة</div>
+                                <div class="col-6 control-data">{{
+                                    getDepartmentName(this.requestDetails.user.departmentId)}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="row col-12 control">
+                                <div class="col-6 control-header">المسمى</div>
+                                <div class="col-6 control-data">{{ this.requestDetails.user.jobTitle}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h3 class="section-header">
+                                بيانات الطلب</h3>
+
+
+                            <div class="row col-12">
+                                <div class="col-6">
+                                    <div class="row col-12 control">
+                                        <div class="col-6 control-header">نوع الطلب</div>
+                                        <div class="col-6 control-data">{{ this.requestDetails.service.name}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row col-12 control">
+                                        <div class="col-6 control-header">تاريخ تقديم الطلب</div>
+                                        <div class="col-6 control-data">{{ this.requestDetails.createdOn |
+                                            date:'yyyy-MM-dd'
+                                            }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-12">
+                                <div class="col-6">
+                                    <div class="row col-12 control">
+                                        <div class="col-6 control-header">حالة الطلب</div>
+                                        <div class="col-6">{{ this.requestDetails.requestStatus.name}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row col-12 control">
+                                        <div class="col-6 control-header">المرحلة الحالية للطلب</div>
+                                        <div class="col-6" *ngIf="this.requestDetails.currentPhase">{{
+                                            this.requestDetails.currentPhase.name}}</div>
+                                        <div class="col-6">لايوجد</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h3 class="section-header">
+                                حقول الطلب</h3>
+                            <div class="small-grid row" *ngIf="RequestFormGroup.value.RequestControls.length>0">
+                                <mat-card *ngFor="let requestControl of getControls();let i = index"
+                                    style="width: 100% !important;border: 0;" id="id+{{i}}" class="xyz">
+                                    <ng-container [formGroup]="requestControl">
+                                        <div style="text-align: center;font-family: 'Bahij';width: 100%;height: 100%;">
+                                            <div class="col-md-12 row">
+                                                <div class="col-md-12 control-header">
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==1"
+                                                        style="vertical-align: top;">edit</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==2"
+                                                        style="vertical-align: top;">arrow_drop_down_circle</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==3"
+                                                        style="vertical-align: top;">radio_button_checked</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==4"
+                                                        style="vertical-align: top;">check_box</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==5"
+                                                        style="vertical-align: top;">attach_file</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==6"
+                                                        style="vertical-align: top;">wrap_text</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==7"
+                                                        style="vertical-align: top;">calendar_today</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==8"
+                                                        style="vertical-align: top;">person_add</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==9"
+                                                        style="vertical-align: top;">filter_1</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==10"
+                                                        style="vertical-align: top;">date_range</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==11"
+                                                        style="vertical-align: top;">perm_media</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==12"
+                                                        style="vertical-align: top;">notes</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==13"
+                                                        style="vertical-align: top;">star_half</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==14"
+                                                        style="vertical-align: top;">move_to_inbox</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==15"
+                                                        style="vertical-align: top;">arrow_drop_down_circle</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==16"
+                                                        style="vertical-align: top;">radio_button_checked</mat-icon>
+                                                    <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==17"
+                                                        style="vertical-align: top;">check_box</mat-icon>
+                                                    {{requestControl.get('title')?.value}}
+                                                    <span style="color: #fa0123;"
+                                                        *ngIf="requestControl.get('isMandatory')?.value">
+                                                        *</span>
+                                                </div><br /><br />
+                                                <div class="col-md-12 control-data" style="text-align: center;">
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==1">
+                                                        <label
+                                                            class="form-control">{{requestControl.get('controlData')?.value}}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==2">
+                                                        <label class="form-control"
+                                                            style="word-wrap: break-word;">{{requestControl.get('controlData')?.value}}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==3">
+                                                        <mat-radio-group aria-label="اختر" class="field-lable"
+                                                            color="primary" formControlName="controlData" 
+                                                            [name]="requestControl.get('name')?.value"
+                                                            [value]="requestControl.get('controlData')?.value">
+                                                            <mat-radio-button class="field-lable" [disabled]="true"
+                                                                *ngFor="let ds of getDataSource(requestControl.get('dataSourceID')?.value)"
+                                                                [name]="requestControl.get('name')?.value"
+                                                                value="{{ds.id}}">
+                                                                {{ds.arName }}</mat-radio-button>
+                                                        </mat-radio-group>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==4">
+                                                        <div style="float: right;"
+                                                            *ngFor="let choice of getDataSource(requestControl.get('dataSourceID')?.value); let i=index">
+
+                                                            <label class="field-lable" style="padding:10px !important;">
+                                                                <ng-container
+                                                                    *ngIf="requestControl.get('controlData')?.value.toString().split(',').includes(choice.id+'')">
+                                                                    <input class="field-lable" type="checkbox" checked
+                                                                        disabled><span class="field-lable"
+                                                                        style="padding:10px !important;">{{choice.arName
+                                                                        }}</span>
+                                                                </ng-container>
+                                                                <ng-container
+                                                                    *ngIf="!requestControl.get('controlData')?.value.toString().split(',').includes(choice.id+'')">
+                                                                    <input class="field-lable" type="checkbox"
+                                                                        disabled><span class="field-lable"
+                                                                        style="padding:10px !important;">{{choice.arName
+                                                                        }}</span>
+                                                                </ng-container>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==5">
+                                                        <div class="row col-12">
+                                                            <div class="col-4">
+
+                                                            </div>
+                                                            <div class="col-4" style="vertical-align: middle;">
+                                                                <br />
+                                                                <ng-container
+                                                                    *ngIf="requestControl.get('controlData')?.value">
+                                                                    <mat-icon>download</mat-icon>
+                                                                    <a style="font-weight: bold;font-style: normal;"
+                                                                        [download]="requestControl.get('controlData')?.value"
+                                                                        [href]="requestControl.get('fileDirectory')?.value"
+                                                                        target="_blank">تحميل</a>
+                                                                </ng-container>
+                                                                <ng-container
+                                                                    *ngIf="!requestControl.get('controlData')?.value">
+                                                                    <span>لم يتم إرفاق الملف</span>
+                                                                </ng-container>
+                                                            </div>
+                                                            <div class="col-4">
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==6">
+                                                        <label class="form-control"
+                                                            style="word-wrap: break-word;">{{requestControl.get('controlData')?.value}}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==7">
+                                                        <label
+                                                            class="form-control">{{requestControl.get('controlData')?.value
+                                                            |
+                                                            date:'yyyy-MM-dd'}}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==8">
+                                                        <label
+                                                            class="form-control">{{requestControl.get('controlData')?.value}}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==9">
+                                                        <label
+                                                            class="form-control">{{requestControl.get('controlData')?.value}}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==10">
+                                                        <label
+                                                            class="form-control">{{requestControl.get('controlData')?.value
+                                                            }}</label>
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==11"
+                                                        class="scaled-img">
+
+                                                        <div class="row col-12">
+
+                                                            <div class="col-6" style="vertical-align: middle;">
+                                                                <br />
+                                                                <ng-container
+                                                                    *ngIf="requestControl.get('controlData')?.value">
+                                                                    <mat-icon>download</mat-icon>
+                                                                    <a style="font-weight: bold;font-style: normal;"
+                                                                        [download]="requestControl.get('controlData')?.value"
+                                                                        [href]="requestControl.get('fileDirectory')?.value"
+                                                                        target="_blank">تحميل</a>
+                                                                </ng-container>
+                                                                <ng-container
+                                                                    *ngIf="!requestControl.get('controlData')?.value">
+                                                                    <span>لم يتم إرفاق الصورة</span>
+                                                                </ng-container>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <img [src]="requestControl.get('fileDirectory')?.value" 
+                                                                    class="scaled-img" width="60px" />
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value==13">
+                                                        <ngb-rating [max]='5' 
+                                                            formControlName="controlData"></ngb-rating>
+                                                    </div>
+                                                    <div
+                                                        *ngIf="requestControl.get('elementTypeID')?.value==14 || requestControl.get('elementTypeID')?.value==15 || requestControl.get('elementTypeID')?.value==16">
+                                                        <label
+                                                            class="form-control">{{requestControl.get('controlData')?.value}}</label>
+                                                    </div>
+
+                                                    <div *ngIf="requestControl.get('elementTypeID')?.value ==17">
+                                                        <div style="float: right;"
+                                                            *ngFor="let choice of externalDatasourceListsDictionary.get(requestControl.get('externalSourceID')?.value); let i=index">
+
+                                                            <label class="field-lable" style="padding:10px !important;">
+                                                                <ng-container
+                                                                    *ngIf="requestControl.get('controlData')?.value.toString().split(',').includes(choice.name)">
+                                                                    <input class="field-lable" type="checkbox" checked
+                                                                        disabled><span class="field-lable"
+                                                                        style="padding:10px !important;">{{choice.name
+                                                                        }}</span>
+                                                                </ng-container>
+                                                                <ng-container
+                                                                    *ngIf="!requestControl.get('controlData')?.value.toString().split(',').includes(choice.name)">
+                                                                    <input class="field-lable" type="checkbox"
+                                                                        disabled><span class="field-lable"
+                                                                        style="padding:10px !important;">{{choice.name
+                                                                        }}</span>
+                                                                </ng-container>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h3 class="section-header">
+                                العمليات على الطلب</h3>
+                            <ng-container *ngIf="thereIsDoneTasksToShow">
+
+                                <table mat-table style="width: 100%;" class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th mat-header-cell>المرحلة</th>
+                                            <th mat-header-cell>القرار</th>
+                                            <th mat-header-cell>تم التنفيذ بواسطة</th>
+                                            <th mat-header-cell>تاريخ تنفيذ العملية</th>
+                                            <th mat-header-cell>تاريخ إسناد المهمة</th>
+                                            <th mat-header-cell>الملاحظات</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let tsk of requestDetails.assignedTasks">
+                                            <ng-container *ngIf="tsk.isDone">
+                                                <td mat-cell>{{ getPhaseName(tsk.phaseId)}}</td>
+                                                <td mat-cell>{{ getDecisionTypeName(tsk.decisionId) }}</td>
+                                                <td mat-cell>{{ tsk.executedByName }}</td>
+                                                <td mat-cell>{{ tsk.executedOn | date:'yyyy-MM-dd'}}</td>
+                                                <td mat-cell>{{ tsk.createdOn | date:'yyyy-MM-dd' }}</td>
+                                                <td mat-cell>{{ tsk.notes}}</td>
+
+                                            </ng-container>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </ng-container>
+                            <ng-container *ngIf="!thereIsDoneTasksToShow">
+                                <div>
+                                    لم يتم أي اتخاذ أي إجراء على الطلب أو غير مصرح لك بالاطلاع
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <h3 class="section-header">
+                                مسار عمل الطلب</h3>
+                            <mat-card-actions>
+                                <mat-card class="request-flow-apply done-bg">
+
+                                    <p style="font-weight: bold;padding-top: 10px;">
+                                        <mat-icon style="vertical-align: bottom !important;">send</mat-icon>
+                                        تقديم الطلب
+                                    </p>
+
+
+                                </mat-card>
+                            </mat-card-actions>
+                            <mat-card-actions *ngFor="let phase of this.requestDetails.form.approvalsPhases"
+                                style="width: 100%;margin: 0px;">
+                                <mat-card class="grid-card" [ngClass]="phase.styleClass">
+
+                                    <div class="col-md-12 row">
+                                        <div class="col-1" style="text-align: right;">
+                                            <mat-icon>group</mat-icon>
+                                        </div>
+                                        <div class="col-10" style="align-self: center;">
+                                            <p style="font-weight: bold;padding-top: 10px;text-align: center;">
+                                                {{phase.name}} </p>
+                                        </div>
+                                        <div class="col-1" style="text-align: left;">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 row" *ngIf="phase.approvalTypeID ==8">
+                                        إرسال بيانات الطلب إلى خدمة خارجية
+                                    </div>
+                                    <div class="col-md-12 row" *ngIf="phase.approvalTypeID!=8">
+                                        <div class="col-5">
+                                            <h3 style="text-align: right;font-family: 'Bahij';">اعتماد
+                                                {{getPhaseTypeName(phase.approvalTypeID)}}</h3>
+                                            <p *ngIf="phase.approvalTypeID==1"> {{
+                                                getGroupName(phase.groupID)
+                                                }}
+                                            </p>
+                                            <p *ngIf="phase.approvalTypeID==2"> {{
+                                                getDepartmentName(phase.departmentID) }}
+                                            </p>
+                                        </div>
+                                        <div class="col-7">
+                                            <div
+                                                *ngIf="requestDetails.currentPhase && phase.id===requestDetails.currentPhaseId">
+                                                <h3>المعتمدين</h3>
+                                                <div *ngFor="let approvalName of requestDetails.currentTaskOwnersNames">
+                                                    -{{approvalName}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </mat-card>
+                            </mat-card-actions>
+                            <mat-card-actions>
+
+                                <mat-card class="request-flow-completed">
+                                    <p style="font-weight: bold;padding-top: 10px;"><mat-icon
+                                            style="vertical-align: bottom !important;">done</mat-icon> اكتمال
+                                        الطلب </p>
+                                </mat-card>
+                            </mat-card-actions>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3" style="text-align: center;">
+            <div class="row col-12">
+                <div class="row svg-limited">
+                    <img src="/assets/images/startup-idea-RequestDetails.svg">
+                </div>
+                <br /><br />
+                <div class="row">
+                    <div class="card blue-card">
+                        <span style="font-weight: bold;">وصف الخدمة</span><br />
+                        {{ requestDetails.service.description}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="col-xs-12" *ngIf="!isDataLoaded" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>

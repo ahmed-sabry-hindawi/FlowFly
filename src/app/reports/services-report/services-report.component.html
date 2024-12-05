@@ -1,0 +1,261 @@
+<div id="layoutSidenav" class="col-12">
+
+
+    <div class="col-12" *ngIf="isLoading" style="margin-right: 5px;margin-top: 5px;padding-right: 2px;">
+        <br /><br />
+        <img src="/assets/images/SwallowCatch.png">
+        <br /><br /> <br /><br />
+        <app-loading-spinner></app-loading-spinner>
+    </div>
+    <div *ngIf="!isLoading" style="margin-right: 20px;margin-top: 0px;padding-right: 2px;" class="col-12">
+
+
+        <div class="col-12 row">
+            <div class="alert alert-danger response-message" *ngIf="errorMessage">
+                <p>
+                    {{ errorMessage }}<mat-icon>cancel</mat-icon>
+                </p>
+            </div>
+            <div class="alert alert-success response-message" *ngIf="successMessage">
+
+                <p>
+                    {{ successMessage }} <mat-icon>check_circle</mat-icon>
+                </p>
+            </div>
+        </div>
+
+        <div class="row col-12">
+            <div class="card" style="margin: 20px;padding: 10px;min-height: 1000px;width: 100%;">
+                <!-- <div class="col-12">
+                    <div class="form-control" style="background-color: #f9f9f9;width: 100%;">
+                        <i class="fas fa-table me-1"></i>
+                        <h1 style="text-align: center;font-family: 'Bahij';"></h1>
+                    </div>
+                </div>
+                <div class="row col-12">
+                    <br />
+                </div> -->
+                <h3 class="section-header">
+                    تقارير الخدمات</h3>
+                    <br/>   
+                <div class="row col-12">
+                    
+                    <div class="col-3">
+
+                        <mat-select class="field-lable form-control" (selectionChange)="SearchRequests()"
+                            [(value)]="selectedService">
+                            <mat-option class="field-lable" color="primary" value="-1">اختر الخدمة
+                            </mat-option>
+                            <ng-container *ngFor="let serviceCategory  of allServices">
+                                <mat-option class="field-lable" color="primary"
+                                    *ngFor="let srv of serviceCategory.services" [value]="srv.id">
+
+                                    {{srv.name }}</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </div>
+
+                    <div class="col-4"></div>
+                    <div class="col-2"></div>
+                    <div class="col-2"></div>
+
+
+                </div>
+                <div class="row col-12">
+                    <br />
+                </div>
+
+                <div class="row col-12">
+                    <div class="col-9" style="overflow-y: auto" *ngIf="+selectedService==-1">
+                        <br /><br /><br /><br />
+                        <p style="font-weight: bold;font-family: 'bahij';text-align: center;color: blue;">
+                            اختر الخدمة
+                        </p>
+                        <br /><br /><br /><br />
+                    </div>
+                    <div class="col-9" style="overflow-y: auto"
+                        *ngIf="+selectedService!=-1 && ServiceRequests.length > 0">
+
+
+                        <ng-container>
+                            <div class="col-12 ">
+                                <!-- <div style="margin: 10px;width: 100%;text-align: center !important;">
+                                    <h3 class="section-header">
+                                        طلبات خدمة {{ selectedServiceName}}</h3>
+                                </div> -->
+                                <p>عدد الطلبات : {{itemsCount}}</p>
+                                <mat-paginator style="font-family: 'bahij';direction: rtl;" id="paginator"
+                                    class="demo-paginator" [length]="itemsCount" [pageIndex]="pageIndex"
+                                    [pageSize]="pageSize" (page)="handlePageEvent($event)" aria-label="اختر الصفحة">
+                                </mat-paginator>
+                                <table mat-table style="width: 100%;" class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th mat-header-cell>رقم الطلب</th>
+                                            <th mat-header-cell>صاحب الطلب</th>
+                                            <th mat-header-cell>الخدمة</th>
+                                            <th mat-header-cell>تاريخ تقديم الطلب</th>
+                                            <th mat-header-cell>خيارات</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+
+                                        <tr *ngFor="let rqs of ServiceRequests" style="border-top:solid #f9f9f9;">
+                                            <td mat-cell>{{ rqs.requestId}}</td>
+                                            <td mat-cell>{{ rqs.user.fullName }}</td>
+                                            <!-- <td mat-cell>{{ rqs.service.name }}</td> -->
+                                            <td mat-cell>{{ selectedServiceName }}</td>
+                                            <td mat-cell>{{ rqs.createdOn | date:'yyyy-MM-dd' }}</td>
+
+                                            <td mat-cell>
+                                                <section class="example-section">
+                                                    <button mat-fab color="primary" type="button" title="تفاصيل الطلب"
+                                                        (click)="redirectToRequestDetails(rqs)">
+                                                        <mat-icon>menu</mat-icon>
+                                                    </button>
+                                                </section>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="+selectedService!=-1 && ServiceRequests.length==0">
+                            <br /><br /><br /><br />
+                            <p style="font-weight: bold;font-family: 'bahij';text-align: center;color: red;">
+                                لايوجد لديك طلبات
+                            </p>
+                            <br /><br /><br /><br />
+                        </ng-container>
+                        <br />
+
+                    </div>
+                    <div class="col-3" *ngIf="this.report.reportSummary && this.report.reportSummary.length > 0">
+                        <div class="col-12 bordered-table">
+                            <div style="margin: 10px;width: 100%;text-align: center !important;">
+                                <h3 class="section-header">
+                                    ملخص الخدمة</h3>
+                            </div>
+                            <table mat-table style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th mat-header-cell>الحقل</th>
+                                        <th mat-header-cell>المجموع</th>
+                                        <th mat-header-cell>المعدل</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    <tr *ngFor="let item of this.report.reportSummary">
+                                        <td mat-cell>{{ item.ElementName}}</td>
+                                        <td mat-cell *ngIf="item.ElementTypeID==9">{{ item.ElementSum}}</td>
+                                        <td mat-cell *ngIf="item.ElementTypeID==9">
+                                            {{ item.ElementAverage}}
+                                        </td>
+                                        <td mat-cell *ngIf="item.ElementTypeID==13" colspan="2">
+                                            <ngb-rating [max]=5 [rate]="item.ElementAverage" [readonly]="true">
+                                            </ngb-rating>
+                                            <br />
+                                            <span>التقييم {{item.ElementAverage}} من 5</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-3" *ngIf="!this.report.reportSummary || this.report.reportSummary.length==0">
+                        <div class="row col-12">
+                            <div class="row svg-limited">
+                                <img src="/assets/images/reports.svg">
+                            </div>
+                            <br /><br />
+                            <div class="row" *ngIf="+selectedService!=-1">
+                                <div class="card blue-card">
+                                    <span style="font-weight: bold;">وصف الخدمة</span><br />
+                                    {{selectedServiceDescription}}
+                                </div>
+                                <div  style="text-align: center;">
+                                    <br/>
+                                    <button class="btn btn-success field-lable DecisionButton" (click)="exportexcel()"> تصدير إلى إكسل
+                                        <mat-icon>grid_on</mat-icon></button>
+
+                                    <!-- <button class="btn btn-warning field-lable DecisionButton" (click)="exportexcel()">تحليل البيانات
+                                        <mat-icon>bar_chart</mat-icon></button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="report!=null && report.requests!=null && report.requests.length > 0">
+                    <div class="row col-12" style="display: none;">
+                        <div class="col-12 bordered-table" id="excel-table">
+                            <div style="margin: 10px;width: 100%;text-align: center !important;">
+                                <h3 class="section-header">
+                                    طلبات خدمة {{ selectedServiceName}}</h3>
+                            </div>
+                            <div style="margin-right: 20px;">
+                                <p>عدد الطلبات : {{report.requests.length}}</p>
+                            </div>
+                            <table mat-table style="width: 100%;" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th mat-header-cell>رقم الطلب</th>
+                                        <th mat-header-cell>صاحب الطلب</th>
+                                        <th mat-header-cell>حالة الطلب</th>
+                                        <th mat-header-cell>تاريخ تقديم الطلب</th>
+                                        <ng-container
+                                            *ngFor="let col of this.report.columnsTitles | slice : 0 : report.columnsCount">
+                                            <th mat-header-cell>
+                                                {{col}}
+                                            </th>
+                                        </ng-container>
+                                        <th mat-header-cell>خيارات</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rqst of pageRequests">
+                                        <td mat-cell>{{ rqst.requestID}}</td>
+                                        <td mat-cell>{{ rqst.userName }}</td>
+                                        <td mat-cell>{{ rqst.statusName }}</td>
+                                        <td mat-cell style="direction: ltr;">{{ rqst.createdOn }}</td>
+                                        <ng-container *ngFor="let elmnt of rqst.elements">
+                                            <td>
+
+                                                {{elmnt}}
+                                            </td>
+                                        </ng-container>
+
+                                        <td mat-cell style="text-align: left;">
+
+
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <mat-paginator style="font-family: 'bahij';direction: rtl;" id="paginator"
+                                class="demo-paginator" [length]="requestsCount" [pageIndex]="pageIndex"
+                                [pageSize]="pageSize" (page)="handlePageEvent($event)" aria-label="اختر الصفحة">
+                            </mat-paginator><br />
+
+
+                        </div>
+
+
+                    </div>
+                </ng-container>
+
+                <div class="row col-12">
+                    <br />
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

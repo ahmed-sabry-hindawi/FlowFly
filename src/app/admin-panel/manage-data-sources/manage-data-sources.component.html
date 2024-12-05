@@ -1,0 +1,336 @@
+<div class="col-xs-12" *ngIf="isLoading" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>
+<div *ngIf="!isLoading">
+    <div class="col-12 row">
+        <div class="alert alert-danger response-message" *ngIf="errorMessage">
+            <p>
+                {{ errorMessage }}<mat-icon>cancel</mat-icon>
+            </p>
+        </div>
+        <div class="alert alert-success response-message" *ngIf="successMessage">
+
+            <p>
+                {{ successMessage }} <mat-icon>check_circle</mat-icon>
+            </p>
+        </div>
+    </div>
+    <div class="col-12 row">
+        <div class="col-9">
+            <br />
+            <div class="row col-12">
+                <div class="col-6">
+                    <div style="margin: 1rem;">
+                        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"
+                            href="#!"><i class="fas fa-bars"></i></button>
+                        <form class="d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                            <div class="input-group">
+                                <input class="form-control"
+                                    style="direction: rtl;border-radius:0rem 0.375rem 0.375rem 0rem;" type="text"
+                                    placeholder="ابحث عن مصدر بيانات..." aria-label="Search for..." name="searchText"
+                                    (change)="onSearch()" aria-describedby="btnNavbarSearch" [(ngModel)]="searchText" />
+                                <button class="btn btn-primary"
+                                    style="direction: rtl;border-radius:0.375rem 0rem 0rem 0.375rem;vertical-align: middle;"
+                                    id="btnNavbarSearch" type="button" (click)="onSearch()">
+                                    <mat-icon>search</mat-icon></button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-6">
+
+                    <div style="text-align: left;margin: 1rem;">
+                        <button class="btn btn-success field-lable" (click)="openAddDataSourceDialog()">إضافة مصدر
+                            بيانات جديد <mat-icon>add</mat-icon></button>
+                    </div>
+                </div>
+            </div>
+            <br />          
+            <ng-container *ngIf="allDataSources!=null && allDataSources.length>0">
+                
+                <table mat-table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th mat-header-cell>المصدر</th>
+                            <th mat-header-cell>اسم المصدر</th>
+                            <th mat-header-cell>حالة المصدر</th>
+                            <th mat-header-cell>تفعيل/تعطيل</th>
+                            <th>خيارات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let source of allDataSources">
+
+                            <tr>
+
+                                <td mat-cell>{{ source.name}}</td>
+                                <td mat-cell>{{ source.arName }}</td>
+                                <td mat-cell>{{ source.isActive ? 'فعالة' : 'معطلة'}}</td>
+                                <td mat-cell>
+                                    <section class="example-section">
+                                        <mat-slide-toggle class="example-margin"
+                                            (click)="onChangeDataSourceStatus(source)" [checked]='source.isActive'
+                                            color="alert-success">
+
+                                        </mat-slide-toggle>
+                                    </section>
+                                </td>
+                                <td>
+                                    <button mat-fab color="primary" type="button"
+                                        (click)="openUpdateDataSourceDialog(source.id)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+
+                                    <!-- <button mat-fab color="primary" type="button" [matMenuTriggerFor]="menu" title="خيارات">
+                                    <mat-icon>menu</mat-icon>
+                                </button> -->
+                                    <!-- <mat-menu #menu="matMenu" [overlapTrigger]="true">
+                                    <button mat-fab color="primary" style="background-color: green;"
+                                        (click)="openAddDataSourceDialog()" title="إضافة مصدر بيانات جديد">
+                                        <mat-icon>add</mat-icon>
+                                    </button>
+                                    <button mat-fab color="primary" type="button"
+                                        (click)="openUpdateDataSourceDialog(source.id)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </mat-menu> -->
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <mat-accordion>
+                                        <mat-expansion-panel (opened)="panelOpenState = true"
+                                            (closed)="panelOpenState = false">
+                                            <mat-expansion-panel-header
+                                                style="align-content: center !important;align-items: center !important;border-color: rgb(13, 110, 253);color:rgb(13, 110, 253);font-weight: bold !important;">
+                                                <h3
+                                                    style="align-content: center !important;align-items: center !important;font-family: 'bahij';">
+                                                    اضغط هنا لاستعراض العناصر
+                                                </h3>
+
+                                            </mat-expansion-panel-header>
+
+                                            <div
+                                                *ngIf="source.dataSourceItems && source.dataSourceItems.length >0;then content else other_content">
+                                                here is ignored</div>
+                                            <ng-template #content style="align-content: center;">
+                                                <table class="col-xs-6" mat-table
+                                                    style="width: 100% !important;font-family: 'bahij';align-content:end;">
+                                                    <tr>
+                                                        <th mat-header-cell>العنصر</th>
+                                                        <th mat-header-cell>اسم العنصر</th>
+                                                        <th mat-header-cell>خيارات</th>
+                                                    </tr>
+
+                                                    <tr *ngFor="let item of source.dataSourceItems">
+                                                        <td mat-cell>{{item.name}}</td>
+                                                        <td mat-cell>{{ item.arName }}</td>
+                                                        <td mat-cell><button mat-fab style="background-color: red;"
+                                                                (click)="onOpenDeleteItemFromDataSource(item,source.arName)">
+                                                                <mat-icon>delete</mat-icon>
+                                                            </button></td>
+                                                    </tr>
+                                                </table>
+                                            </ng-template>
+                                            <ng-template #other_content style="font-family: 'bahij';">لايوجد عناصر مضافة
+                                                على
+                                                المصدر</ng-template>
+
+                                            <section>
+                                                <div class="example-button-row" style="text-align:right;">
+                                                    <button mat-fab color="primary" style="background-color: green;"
+                                                        title="إضافة عنصر جديد"
+                                                        (click)="openAddItemToDataSourceDialog(source.id)">
+                                                        <mat-icon>add1</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </section>
+
+                                        </mat-expansion-panel>
+                                    </mat-accordion>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </ng-container>
+            <ng-container *ngIf="allDataSources==null || allDataSources.length==0">
+
+                <div style="text-align: center;">
+                    <br />
+                    <h1>لا يوجد بيانات </h1>
+                    <img src="/assets/images/NotFound.svg" style="vertical-align:top;">
+                </div>
+            </ng-container>
+        </div>
+        <div class="col-3" style="text-align: center;">
+            <div class="row">
+                <div class="row svg-limited">
+                    <img src="/assets/images/data-sources.svg">
+                </div>
+                <br /><br />
+                <div class="row">
+                    <div class="card blue-card">
+                        إدارة مصادر البيانات , و يمكنك إضافة مصدر بيانات جديد وإضافة بيانات إليه
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div class="col-4" style="vertical-align: top;text-align: center;padding-top: 20px;">
+            <div class="row col-12">
+                <div class="row svg-limited" style="padding-top: 20px;text-align: center;">
+                    <img src="/assets/images/data-sources.svg" style="vertical-align:top;">
+                </div>
+               
+                <div class="row" style="padding-top: 50px">
+                    <div class="card" style="border: 1px solid ;border-color: #1673FD;text-align: right;padding: 10px;">                                  
+                        إدارة مصادر البيانات , و يمكنك إضافة مصدر بيانات جديد وإضافة بيانات إليه 
+                    </div>
+                </div>
+
+            </div>
+          
+        </div> -->
+
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-5 modal" id="model_AddDataSource" style="display:none;">
+        <div class="modal-content">
+            <span (click)="closeAddDataSourceModal()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">                
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <h1 class="modal-h1-header">إضافة مصدر بيانات</h1>
+                </div>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #dataSourceForm="ngForm" (ngSubmit)="onAddDataSource(dataSourceForm)">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" type="name" name="name" required ngModel />
+                            <label for="name">اسم المصدر بالانكليزية</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="arName" type="arName" name="arName" required ngModel />
+                            <label for="arName">اسم المصدر بالعربي</label>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">إضافة</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-5 modal" id="model_UpdateDataSource" style="display:none;">
+        <div class="modal-content">
+            <span (click)="closeUpdateDataSourcesModal()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">
+                <h3 class="text-center font-weight-light my-4">تعديل مصدر بيانات</h3>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #updateDataSourcesForm="ngForm" (ngSubmit)="onUpdateDataSources(updateDataSourcesForm)">
+                        <input type="hidden" id="id" name="id" ngModel />
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" type="name" name="name" required ngModel />
+                            <label for="name">اسم المصدر بالانكليزية</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="arName" type="arName" name="arName" required ngModel />
+                            <label for="arName">اسم المصدر بالعربية</label>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">تعديل</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-5 modal" id="model_AddItemToDataSources" style="display:none;">
+        <div class="modal-content">
+            <span (click)="closeAddItemToDataSourceDialog()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">               
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <h1 class="modal-h1-header">إضافة عنصر إلى مصدر بيانات</h1>
+                </div>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #addItemToDataSourceForm="ngForm" (ngSubmit)="onAddItemToDataSource(addItemToDataSourceForm)">
+
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" type="name" name="name" required ngModel />
+                            <label for="name">رمز العنصر</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="arName" type="arName" name="arName" required ngModel />
+                            <label for="arName">اسم العنصر</label>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">إضافة</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-lg-5 modal" id="model_DeleteItem" style="display:none;">
+        <div class="modal-content">
+            <span (click)="onCloseDeleteItemFromDataSource()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">               
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <h1 class="modal-h1-header">حذف عنصر من مصدر بيانات</h1>
+                </div>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #deleteDataSourceForm="ngForm" (ngSubmit)="onDeleteItemFromDataSource()">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" disabled="disabled" id="itemName" name="itemName" ngModel />
+                            <label for="itemName">اسم العنصر </label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="souceName" disabled="disabled" name="souceName" ngModel />
+                            <label for="souceName">اسم المصدر</label>
+                        </div>
+                        هل أنت متأكد من حذف العنصر ؟
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">حذف </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

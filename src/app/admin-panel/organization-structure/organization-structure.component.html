@@ -1,0 +1,404 @@
+
+
+<div class="col-xs-12" *ngIf="isLoading" style="text-align: center;align-self: center;">
+  <br /><br />
+  <img src="/assets/images/SwallowCatch.png">
+  <br /><br /> <br /><br />
+  <app-loading-spinner></app-loading-spinner>
+</div>
+<div *ngIf="!isLoading">
+  <br />
+  <div class="col-12 row">
+    <div class="alert alert-danger response-message" *ngIf="errorMessage">
+      <p>
+        {{ errorMessage }}<mat-icon>cancel</mat-icon>
+      </p>
+    </div>
+    <div class="alert alert-success response-message" *ngIf="successMessage">
+
+      <p>
+        {{ successMessage }} <mat-icon>check_circle</mat-icon>
+      </p>
+    </div>
+  </div>
+  <div class="col-12 row">
+
+    <div class="col-3">
+      <div class="form-bordered" style="height: 100%;min-height: 800px;;">
+        <div style="margin: 10px;width: 100%;text-align: center !important;">
+          <h3 class="section-header">
+            إدارات الهيكل التنظيمي</h3>
+        </div>
+        <mat-form-field style="pointer-events: auto !important;">
+          <mat-label style="font-family: 'bahij' !important;">ابحث عن إدارة</mat-label>
+          <input style="font-family: 'bahij' !important;" matInput minlength="2"
+            (keyup)="applyFilter($event.target['value'])" placeholder="إدارة" #input>
+        </mat-form-field>
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+          <!-- This is the tree node template for leaf nodes -->
+          <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+            <!-- use a disabled button to provide padding for tree leaf -->
+            <button mat-icon-button disabled></button>
+            <span (click)="selectDepartment(node.id)"  [ngClass]="highlight(node.id)" [ngbTooltip]="getDepartmentTypeName(node.typeId)">{{node.name}}</span>
+            <mat-icon *ngIf="node.id==1">account_balance</mat-icon>
+          </mat-tree-node>
+          <!-- This is the tree node template for expandable nodes -->
+          <mat-tree-node *matTreeNodeDef="let node;when: hasChild" style="font-family: 'bahij' !important;cursor: pointer !important;"
+            matTreeNodePadding>
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+            </button>
+            <span (click)="selectDepartment(node.id)"  [ngClass]="highlight(node.id)"
+              style="cursor: pointer !important;cursor: pointer !important;" [ngbTooltip]="getDepartmentTypeName(node.typeId)">{{node.name}}</span><mat-icon
+              *ngIf="node.id==1">account_balance</mat-icon>
+          </mat-tree-node>
+        </mat-tree>
+      </div>
+    </div>
+    <div class="col-7">
+      <div class="form-bordered" style="height: 100%;">
+        <div style="margin: 10px;width: 100%;text-align: center !important;">
+          <h3 class="section-header">
+            بيانات الإدارة</h3>
+        </div>
+
+        <div class="col-12" *ngIf="selectedDepartment">
+          <div class="row col-12">
+            <div class="col-6">
+              <div class="row col-12 control ">
+                <div class="col-6 control-header">رقم الإدارة</div>
+                <div class="col-6 control-data">{{ this.selectedDepartment.departmentId}}</div>
+              </div>
+
+            </div>
+            <div class="col-6">
+              <div class="row col-12 control">
+                <div class="col-6 control-header">اسم الإدارة</div>
+                <div class="col-6 control-data">{{ this.selectedDepartment.departmentName}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row col-12">
+            <div class="col-6">
+              <div class="row col-12 control ">
+                <div class="col-6 control-header">رقم المدير</div>
+                <div class="col-6 control-data">{{
+                  this.selectedDepartment&&
+                  this.selectedDepartment.managerUser!=null?this.selectedDepartment.managerUser.userId:"لايوجد"}}
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row col-12 control">
+                <div class="col-6 control-header">اسم المدير</div>
+                <div class="col-6 control-data">
+                  {{this.selectedDepartment &&this.selectedDepartment.managerUser!=null?
+                  this.selectedDepartment.managerUser.fullName:"لايوجد"}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row col-12">
+            <div class="col-6">
+              <div class="row col-12 control ">
+                <div class="col-6 control-header">نوع الإدارة</div>
+                <div class="col-6 control-data">{{ this.selectedDepartment &&
+                  this.selectedDepartment.departmentType.name}}</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row col-12 control">
+                <div class="col-6 control-header">الإدارة الأعلى</div>
+                <div class="col-6 control-data">{{this.parentOfSelectedDepartment?
+                  this.parentOfSelectedDepartment.departmentName:"-"}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="text-align: center;">
+            <div class="col-12">
+              <button class="btn btn-sm btn-primary field-lable" style="margin: 0.2rem;"
+                (click)="openAddEmployeeToDepartmentDialogue()">إضافة موظف إلى الإدارة
+                <mat-icon>person_add</mat-icon></button>
+              <button class="btn btn-sm btn-primary field-lable" style="margin: 0.2rem;"
+                (click)="openAddDepartmentDialogue()">إضافة إدارة جديدة
+                <mat-icon>add</mat-icon></button>
+              <button class="btn btn-sm btn-primary field-lable" style="margin: 0.2rem;"
+                (click)="openUpdateDepartmentDialogue()">تعديل بيانات الإدارة
+                <mat-icon>edit</mat-icon></button>
+                <button [disabled]="selectedDepartment.departmentId ==1 || selectedDepartment.users.length>0" class="btn btn-sm btn-danger field-lable" style="margin: 0.2rem;"
+                (click)="openDeactivateDepartmentDialogue()">حذف الإدارة
+                <mat-icon>delete</mat-icon></button>
+            </div>
+
+          </div>
+          <div
+            *ngIf="this.selectedDepartment && this.selectedDepartment.users && this.selectedDepartment.users.length>0">
+            <table mat-table style="width: 100%;" class="data-table">
+              <thead>
+                <tr>
+                  <th mat-header-cell>الرقم</th>
+                  <th mat-header-cell>الاسم</th>
+                  <th mat-header-cell>المسمى الوظيفي</th>
+                  <th mat-header-cell>الجنس</th>
+
+                  <th>خيارات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let user of this.selectedDepartment.users">
+
+                  <tr>
+
+                    <td mat-cell>{{ user.userId}}</td>
+                    <td mat-cell>{{ user.fullName }}</td>
+                    <td mat-cell>{{ user.jobTitle }}</td>
+                    <td mat-cell>{{ user.gender ? 'ذكر' : 'أنثى'}}</td>
+                    <td>
+                      <button mat-fab color="primary" type="button" (click)="openUpdateUserDialog(user.userId)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+          <div
+            *ngIf="!(this.selectedDepartment && this.selectedDepartment.users && this.selectedDepartment.users.length>0)"
+            style="text-align: center;font-weight: bold;">
+            <br /> <br /> <br />
+            <p>لايوجد مستخدين مضافين على الإدارة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-2" style="text-align: center;">
+      <div class="row">       
+          <img src="/assets/images/OS.svg" style="margin-top: 3rem;">
+          <div class="card blue-card" style="margin-top: -6rem;">
+            الهيكل التنظيمي يمكنك من إدارة بنية الإدارات والأقسام
+            وحذف وإضافة مستخدم إلى الإدارات المختلفة مما ينعكس على آلية اعتماد الطلبات
+          </div>        
+      </div>
+    </div>
+  </div>
+  <br />
+</div>
+
+
+
+
+<div class="row justify-content-center">
+
+  <div class="col-lg-5 modal" id="model_AddDepartment" style="display:none;z-index: 10;">
+    <div class="modal-content">
+
+      <span (click)="closeAddDepartment()" class="close">&times;</span>
+      <div class="card border-0 rounded-lg">
+        <div class="form-control" style="background-color: #f9f9f9;">
+          <h1 class="modal-h1-header">إضافة إدارة جديدة</h1>
+        </div>
+
+        <div class="card-body" *ngIf="!isModalLoading">
+          <form #addDepartmentForm="ngForm" (ngSubmit)="AddDepartmentDialogue(addDepartmentForm)">
+
+            <div class="form-floating mb-3">
+              <input class="form-control" id="name" name="name" required ngModel />
+              <label for="name">اسم الإدارة</label>
+            </div>
+            
+            <div class="form-floating mb-3">
+              <label for="typeID">نوع الإدارة</label><br /><br />
+              <mat-select class="field-lable form-control" name="typeID" id="typeID" required [ngModel]="1">
+                  <mat-option class="field-lable" color="primary" [value]="-1">اختر نوع الإدارة
+                  </mat-option>
+                  <mat-option class="field-lable" color="primary"
+                      *ngFor="let tp of departmentTypes" [value]="tp.id">
+                      {{tp.name }}</mat-option>
+              </mat-select>
+              <div *ngIf="addDepartmentForm.controls['typeID']!=undefined && addDepartmentForm.controls['typeID'].value=='-1' && addDepartmentForm.controls['typeID']?.touched"
+                  style="color: red;">نوع الإدارة مطلوب</div>
+          </div>
+            <div class="form-floating mb-3">
+              <mat-form-field style="font-family: 'Bahij' !important;width: 100%;">
+                <input type="text" class="form-control" placeholder="مدير الإدارة" aria-label="Number" matInput
+                  [matAutocomplete]="auto"  name="selectedUser" required ngModel
+                  (keydown)="onTypeUserName($event)" />
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let user of usersFiltered" style="font-family: 'Bahij' !important;"
+                    [value]="user.fullName">{{user.fullName}}</mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+              <button class="btn btn-primary" type="submit">إضافة الإدارة</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-xs-12 col-md-6 " *ngIf="isModalLoading" style="text-align: center;">
+          <br /><br />
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="row justify-content-center">
+
+  <div class="col-lg-5 modal" id="model_UpdateDepartment" style="display:none;z-index: 10;">
+    <div class="modal-content">
+
+      <span (click)="closeUpdateDepartmentDialogue()" class="close">&times;</span>
+      <div class="card border-0 rounded-lg">
+        <div class="form-control" style="background-color: #f9f9f9;">
+          <h1 class="modal-h1-header">تعديل بيانات الإدارة</h1>
+        </div>
+
+        <div class="card-body" *ngIf="!isModalLoading">
+          <form #updateDepartmentForm="ngForm" (ngSubmit)="UpdateDepartment(updateDepartmentForm)">
+
+            <div class="form-floating mb-3">
+              <input class="form-control" id="name" name="name" required ngModel />
+              <label for="name">اسم الإدارة</label>
+            </div>
+            
+            <div class="form-floating mb-3">
+              <label for="typeID">نوع الإدارة</label><br /><br />
+              <mat-select class="field-lable form-control" name="typeID" id="typeID" required [ngModel]="1">
+                  <mat-option class="field-lable" color="primary" [value]="-1">اختر نوع الإدارة
+                  </mat-option>
+                  <mat-option class="field-lable" color="primary"
+                      *ngFor="let tp of departmentTypes" [value]="tp.id">
+                      {{tp.name }}</mat-option>
+              </mat-select>
+              <div *ngIf="updateDepartmentForm.controls['typeID']!=undefined && updateDepartmentForm.controls['typeID'].value=='-1' && updateDepartmentForm.controls['typeID']?.touched"
+                  style="color: red;">نوع الإدارة مطلوب</div>
+          </div>
+            <div class="form-floating mb-3">
+              <mat-form-field style="font-family: 'Bahij' !important;width: 100%;">
+                <input type="text" class="form-control" placeholder="مدير الإدارة" aria-label="Number" matInput
+                  [matAutocomplete]="auto"  name="selectedUser" required ngModel
+                  (keydown)="onTypeUserName($event)" />
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let user of usersFiltered" style="font-family: 'Bahij' !important;"
+                    [value]="user.fullName">{{user.fullName}}</mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+              <button class="btn btn-primary" type="submit">تعديل الإدارة</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-xs-12 col-md-6 " *ngIf="isModalLoading" style="text-align: center;">
+          <br /><br />
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div class="row justify-content-center">
+
+  <div class="col-lg-5 modal" id="model_AddEmployeeToDepartment" style="display:none;z-index: 10;">
+    <div class="modal-content">
+
+      <span (click)="closeAddEmployeeToDepartmentDialogue()" class="close">&times;</span>
+      <div class="card border-0 rounded-lg">
+        <div class="form-control" style="background-color: #f9f9f9;">
+          <h1 class="modal-h1-header">إضافة موظفين إلى الإدارة</h1>
+        </div>
+
+        <div class="card-body" *ngIf="!isModalLoading">
+          <form #addEmployeeToDepartmentForm="ngForm" (ngSubmit)="AddEmployeeToDepartment(addEmployeeToDepartmentForm)">
+
+            <div class="form-floating mb-3">
+              <input class="form-control" id="name" name="name" disabled required ngModel />
+              <label for="name">اسم الإدارة</label>
+            </div>
+            <div class="form-floating mb-3">
+              <mat-form-field style="font-family: 'Bahij' !important;width: 100%;">
+                <input type="text" class="form-control" placeholder="اختر موظف" aria-label="Number" matInput
+                  [matAutocomplete]="auto"  name="selectedUser" required ngModel
+                  (keydown)="onTypeUserName($event)" />
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let user of usersFiltered" style="font-family: 'Bahij' !important;"
+                    [value]="user.fullName">{{user.fullName}}</mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+              <button class="btn btn-primary" type="submit">إضافة الموظف إلى الإدارة</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-xs-12 col-md-6 " *ngIf="isModalLoading" style="text-align: center;">
+          <br /><br />
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="row justify-content-center">
+
+  <div class="col-lg-5 modal" id="model_DeactivateDepartment" style="display:none;z-index: 10;">
+    <div class="modal-content">
+
+      <span (click)="closeDeactivateDepartmentDialogue()" class="close">&times;</span>
+      <div class="card border-0 rounded-lg">
+        <div class="form-control" style="background-color: #f9f9f9;">
+          <h1 class="modal-h1-header">حذف إدارة</h1>
+        </div>
+
+        <div class="card-body" *ngIf="!isModalLoading">
+          <form #deactivateDepartmentForm="ngForm" (ngSubmit)="DeactivateDepartment(deactivateDepartmentForm)">
+
+            <div class="form-floating mb-3">
+              <input class="form-control" id="name" name="name" disabled required ngModel />
+              <label for="name">اسم الإدارة التي ستحذف</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input class="form-control" id="deletedDepartmentName" name="deletedDepartmentName" required ngModel />
+              <label for="name">اكتب اسم الإدارة أعلاه</label>
+
+            </div>
+            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+              <button class="btn btn-primary" type="submit">حذف</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-xs-12 col-md-6 " *ngIf="isModalLoading" style="text-align: center;">
+          <br /><br />
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>FlowFly</title>
+    <link src="../styles.css" rel="stylesheet" />
+
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />  -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">  -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script> -->
+</head>
+
+
+
+<body dir="rtl" id="pageContainer" class="sb-nav-fixed" style="max-width: 99%;">
+    <!-- <body dir="rtl" id="pageContainer" class="sb-nav-fixed" style="max-width: 100%;"> -->
+    <app-header></app-header>
+    <div class="row" style="margin: 0px;max-height: 20%;">
+       
+        <div class="col-12">
+            <div class="row col-md-12" style="position : relative">
+               
+                <div class="row" *ngIf="NoNavBar" >                   
+                        <router-outlet></router-outlet>                    
+                </div>
+                <div class="row" *ngIf="activateWideNavBar">
+
+                    <div class="col-2" style="text-align: right;">
+                        <app-side-nav></app-side-nav>                        
+                    </div>
+                    <div class="col-10" >
+                        <router-outlet></router-outlet>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="activateNarrowNavBar"> 
+                    <!-- <div class="col-1" style="text-align: right;">                      
+                        <app-side-nav-narrow ></app-side-nav-narrow>
+                    </div> -->
+                    <div class="row col-12" >
+                        <div style="width: 3%;">
+                            <app-side-nav-narrow ></app-side-nav-narrow>
+                        </div>
+                        <div style="width: 96%;">                            
+                            <router-outlet></router-outlet>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+                <div style="height: 150px;" >
+
+                </div>
+                <div class="col-12 row" style="position: fixed;bottom: 0;z-index: 100;max-height: 6%;">
+                    <div class="col-2">
+
+                    </div>
+                    <div class="col-8">
+                        <mat-toolbar
+                            style="background-color: black;color: white;border-radius:10px 10px 0px 0px;">
+                            <div class="container-fluid px-4" >
+                                <div
+                                    style="color: white !important;text-align: center !important;font-family: 'bahij';">
+                                    جميع
+                                    الحقوق
+                                    محفوظة
+                                    &copy; FlowFly {{thisYear}}</div>
+                            </div>
+                            <a routerLink="/home/flowfly" routerLinkActive="selectedLink" *ngIf="activateWideNavBar">
+                                <img style="vertical-align: super;" src="/assets/icons/CircleLogoNoLeatherWithBright.png" width="45" ngbTooltip="FlowFly Click to know more" >
+                            </a> 
+                        </mat-toolbar>
+                    </div>
+                    <div class="col-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

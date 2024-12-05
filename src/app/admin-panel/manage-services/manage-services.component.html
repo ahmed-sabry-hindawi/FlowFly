@@ -1,0 +1,553 @@
+<div class="col-xs-12" *ngIf="isLoading" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>
+<div *ngIf="!isLoading">
+    <div class="col-12 row">
+        <div class="alert alert-danger response-message" *ngIf="errorMessage">
+            <p>
+                {{ errorMessage }}<mat-icon>cancel</mat-icon>
+            </p>
+        </div>
+        <div class="alert alert-success response-message" *ngIf="successMessage">
+
+            <p>
+                {{ successMessage }} <mat-icon>check_circle</mat-icon>
+            </p>
+        </div>
+    </div>
+    <div class="col-12 row">
+        <div class="col-9">
+            <br/>
+            <div class="row col-12">
+                <div class="col-6">
+                    <div  style="margin: 1rem;">
+                       
+                        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"
+                            href="#!"><i class="fas fa-bars"></i></button>
+                        <form class="d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                            <div class="input-group">
+                                <input class="form-control"
+                                    style="direction: rtl;border-radius:0rem 0.375rem 0.375rem 0rem;" type="text"
+                                    placeholder="ابحث عن خدمة ..." aria-label="Search for..." name="searchText"
+                                    (change)="onSearch()" aria-describedby="btnNavbarSearch" [(ngModel)]="searchText" />
+                                <button class="btn btn-primary"
+                                    style="direction: rtl;border-radius:0.375rem 0rem 0rem 0.375rem;vertical-align: middle;"
+                                    id="btnNavbarSearch" type="button" (click)="onSearch()">
+                                    <mat-icon>search</mat-icon></button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-6">
+             
+                        <div style="text-align: left;margin: 1rem;">
+                            <button class="btn btn-primary field-lable" style="margin: 10px;"
+                                (click)="openAddServiceCategoryDialog()">إضافة نوع خدمة
+                                <mat-icon>add</mat-icon></button>
+                            <button *ngIf="servicesCategoriesCount >0" class="btn btn-success field-lable"
+                                (click)="openAddServiceDialog()">إضافة خدمة جديدة <mat-icon>add</mat-icon></button>
+                        </div>
+                  
+                </div>
+
+            </div>
+
+            <br />
+
+            <ng-container *ngIf="servicesCount > 0">
+                <table id="datatablesSimple" class="data-table" mat-table>
+                    <thead>
+                        <tr>
+
+                            <th mat-header-cell style="width: 20%;">الخدمة</th>
+                            <th mat-header-cell style="width: 20%;">نوع الخدمة</th>
+                            <th mat-header-cell style="width: 20%;">وصف الخدمة</th>
+                            <th mat-header-cell style="width: 20%;">القيود</th>
+                            <th mat-header-cell style="width: 20%;">حالة الخدمة</th>
+                            <th mat-header-cell style="width: 20%;">خيارات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let category of servicesCategories">
+                            <tr *ngFor="let srv of category.services" style="border-top:solid #f9f9f9;">
+                                <td mat-cell>{{ srv.name}}
+                                </td>
+                                <td mat-cell>{{ category.name }}</td>
+                                <td mat-cell>{{ srv.description }}</td>
+                                <td mat-cell style="font-size: 14px;">
+                                    <ng-container *ngIf="srv.forCitizens">للمواطنين فقط<br /></ng-container>
+                                    <ng-container *ngIf="srv.forCitizens===false">للمقيمين فقط<br /></ng-container>
+                                    <ng-container *ngIf="srv.forGender">للذكور فقط <br /></ng-container>
+                                    <ng-container *ngIf="srv.forGender===false">للإناث فقط <br /></ng-container>
+                                    <ng-container *ngIf="srv.forManagers">للمدراء فقط <br /></ng-container>
+                                    <ng-container *ngIf="srv.forGroup">لمجموعة مستخدمين فقط <br /></ng-container>
+                                    <ng-container *ngIf="srv.stagesDependent">
+                                        <span style="color:red !important;"> متاحة للاستخدام خلال مراحل محددة فقط
+                                            <br /></span>
+                                    </ng-container>
+                                    <ng-container *ngIf="srv.requestsCountTypeId>1">
+                                        عدد الطلبات المسموح بها :<br />
+                                        {{ getRequestsCountTypeName(srv.requestsCountTypeId) }}<br />
+                                    </ng-container>
+                                    <ng-container *ngIf="srv.showingRequestHistoryTypeId>1">
+                                        الاطلاع على العمليات على الطلب :<br />
+                                        {{ getShowingRequestHistoryTypeName(srv.showingRequestHistoryTypeId) }}<br />
+                                    </ng-container>
+                                    <ng-container *ngIf="srv.forCitizens === null &&  srv.forGender === null &&
+                                      srv.forManagers==false && srv.forGroup === null && srv.stagesDependent==false">
+                                        <span style="color:green !important;font-weight: bold;"> لايوجد قيود</span>
+                                    </ng-container>
+                                </td>
+                                <td mat-cell style="font-size: small;">{{ srv.isActive ? 'فعالة' : 'معطلة'}}-
+                                    {{srv.formID ? 'تم إنشاء نموذج':'غير مرتبطة بنموذج'}}
+                                    <span *ngIf="!srv.formID" mat-fab color="primary" type="button" style="color: red;"
+                                        (click)="AddForm(srv)"><mat-icon title="إضافة نموذج"
+                                            style="vertical-align: middle;">link</mat-icon>إضافة نموذج
+
+                                    </span>
+
+                                    <div style="text-align: center;">
+                                        <br />
+                                        <mat-slide-toggle class="example-margin" *ngIf="srv.formID"
+                                            (click)="onChangeServiceStatus(srv)" [checked]='srv.isActive'
+                                            color="primary" title="{{ srv.isActive ? 'تعطيل' : 'تفعيل'}}">
+                                        </mat-slide-toggle>
+                                    </div>
+
+                                </td>
+                                <td mat-cell>
+                                    <section class="example-section">
+
+
+                                        <button mat-fab color="primary" type="button" [matMenuTriggerFor]="menu"
+                                            style="margin: 5px;" title="خيارات">
+                                            <mat-icon>menu</mat-icon>
+                                        </button>
+                                        <span style="direction: ltr !important;">
+                                            <mat-menu #menu="matMenu" [overlapTrigger]="true"
+                                                style="direction: ltr !important;">
+
+                                                <button mat-menu-item (click)="openUpdateServiceDialog(srv.id)">
+                                                    <span style="font-family: 'Bahij' !important;">
+                                                        <mat-icon style="float: left !important; ">edit</mat-icon>
+                                                        تعديل الخدمة </span>
+                                                </button>
+                                                <button mat-menu-item
+                                                    (click)="openUpdateServiceCategoryDialog(category.id)">
+                                                    <span style="font-family: 'Bahij' !important;">
+                                                        <mat-icon style="float: left;">edit</mat-icon>
+                                                        تعديل نوع خدمة
+                                                    </span>
+                                                </button>
+                                                <button mat-menu-item (click)="AddForm(srv)">
+                                                    <span style="font-family: 'Bahij' !important;">
+                                                        <mat-icon style="float: left;">link</mat-icon>
+                                                        نموذج جديد للخدمة
+                                                    </span>
+                                                </button>
+                                            </mat-menu>
+                                        </span>
+
+
+                                    </section>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </ng-container>
+
+            <ng-container *ngIf="servicesCount==0">
+                <div style="text-align: center;">
+                    <br />
+                    <h1>لا يوجد خدمات </h1>
+                    <img src="/assets/images/NotFound.svg" style="vertical-align:top;">
+                </div>
+            </ng-container>
+        </div>
+        <div class="col-3" style="text-align: center;">
+            <div class="row">
+                <div class="row svg-limited">
+                    <img src="/assets/images/manage-services.svg">
+                </div>
+                <br /><br />
+                <div class="row">
+                    <div class="card blue-card">
+                        إدارة خدمات الموقع , ويمكنك إضافة خدمات جديدة وتصميم شاشاتها بكل سهولة وإضافة حقول البيانات
+                        ومراحل
+                        الاعتماد و المعتمدين في كل مرحلة من المراحل
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <div class="row justify-content-center">
+        <div class="col-lg-5 modal" id="model_AddServiceCategory" style="display:none;">            
+            <div class="modal-content">
+                <span (click)="closeAddServiceCategoryModal()" class="close">&times;</span>
+                <div class="card border-0 rounded-lg">                   
+                    <div class="form-control" style="background-color: #f9f9f9;">
+                        <h1 class="modal-h1-header">إضافة نوع خدمات جديد</h1>
+                    </div>
+                    <div class="card-body" *ngIf="!isLoading">
+                        <form #serviceCategoryForm="ngForm" (ngSubmit)="onAddServiceCategory(serviceCategoryForm)">
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" type="name" name="name" required ngModel />
+                                <label for="name">نوع جديد</label>
+                                <div *ngIf="serviceCategoryForm.controls['name']!=undefined &&!serviceCategoryForm.controls['name'].valid && serviceCategoryForm.controls['name']?.touched"
+                                    style="color: red;">اسم نوع الخدمة مطلوب</div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                <button class="btn btn-primary" type="submit"
+                                    [disabled]="!serviceCategoryForm.valid">إضافة</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                        <br /><br />
+                        <app-loading-spinner></app-loading-spinner>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 modal" id="model_AddService" style="display:none;">
+            <div class="modal-content">
+                <span (click)="closeAddServiceModal()" class="close">&times;</span>
+                <div class="card border-0 rounded-lg">
+                    <div class="form-control" style="background-color: #f9f9f9;">
+                        <h1 class="modal-h1-header">إضافة خدمة جديدة</h1>
+                    </div>
+                    <div class="card-body" *ngIf="!isLoading">
+                        <form #serviceForm="ngForm" (ngSubmit)="onAddService(serviceForm)">
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" name="name" required ngModel />
+                                <label for="name">اسم الخدمة</label>
+                                <div *ngIf="serviceForm.controls['name']!=undefined && !serviceForm.controls['name'].valid && serviceForm.controls['name']?.touched"
+                                    style="color: red;">اسم الخدمة مطلوب</div>
+
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="description" type="description" name="description"
+                                    required ngModel />
+                                <label for="description">وصف الخدمة</label>
+                                <div *ngIf="serviceForm.controls['description']!=undefined && !serviceForm.controls['description'].valid && serviceForm.controls['description']?.touched"
+                                    style="color: red;">وصف الخدمة مطلوب</div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="categoryID">نوع الخدمة</label><br /><br />
+                                <mat-select class="field-lable form-control" name="categoryID" required [ngModel]="-1">
+                                    <mat-option class="field-lable" color="primary" [value]="-1">اختر نوع الخدمة
+                                    </mat-option>
+                                    <mat-option class="field-lable" color="primary"
+                                        *ngFor="let ctg of servicesCategories" [value]="ctg.id">
+                                        {{ctg.name }}</mat-option>
+                                </mat-select>
+                                <div *ngIf="serviceForm.controls['categoryID']!=undefined && serviceForm.controls['categoryID'].value=='-1' && serviceForm.controls['categoryID']?.touched"
+                                    style="color: red;">نوع الخدمة مطلوب</div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forGender">مخصصة لجنس محدد</label><br /><br />
+                                <mat-radio-group id="forGender" name="forGender" class="field-lable" color="primary"
+                                    required ngModel value="-1">
+                                    <mat-radio-button class="field-lable" value="-1">
+                                        <span>لكلا الجنسين</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true">
+                                        <span>للذكور فقط</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="false"><span>للإناث
+                                            فقط</span></mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forCitizens">مخصصة للمواطنين</label><br /><br />
+                                <mat-radio-group id="forCitizens" name="forCitizens" class="field-lable" color="primary"
+                                    required ngModel>
+                                    <mat-radio-button class="field-lable"
+                                        value="-1"><span>للجميع</span></mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true"><span>مواطنين
+                                            فقط</span></mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="false"><span>مقيمين
+                                            فقط</span></mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forManagers">مخصصة للمدراء</label><br /><br />
+                                <mat-radio-group id="forManagers" name="forManagers" class="field-lable" color="primary"
+                                    required ngModel>
+                                    <mat-radio-button class="field-lable" [value]="false">
+                                        <span>لجميع المستخدمين</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true">
+                                        <span>مدراء فقط</span>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forGroup">مخصصة لمجموعة محددة</label><br /><br />
+                                <mat-select class="field-lable form-control" name="forGroup" required [ngModel]="-1">
+                                    <mat-option class="field-lable" color="primary" selelced [value]="-1">
+                                        لجميع المستخدمين</mat-option>
+                                    <mat-option class="field-lable" color="primary" *ngFor="let gr of allGroups"
+                                        [value]="gr.id">
+                                        {{gr.arName }}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="StagesDependent">فترة إتاحة تقديم الطلب</label><br /><br />
+                                <mat-radio-group id="StagesDependent" name="StagesDependent" class="field-lable"
+                                    color="primary" required ngModel>
+                                    <mat-radio-button class="field-lable" [value]="false">
+                                        <span>متاح دائما</span></mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true">
+                                        <span>فترات محددة (تتم إدارتها من خلال إدارة المراحل)</span>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="requestsCount">عدد الطلبات المسموح بها</label><br /><br />
+                                <mat-select class="field-lable form-control" name="requestsCount" required
+                                    [ngModel]="1">
+
+                                    <mat-option class="field-lable" color="primary"
+                                        *ngFor="let cnt of allRequestsCountTypes" [value]="cnt.id">
+                                        {{cnt.name }}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="ShowingHistory">عرض العمليات التي تتم على الطلب</label><br /><br />
+                                <mat-select class="field-lable form-control" name="ShowingHistory" required
+                                    [ngModel]="1">
+
+                                    <mat-option class="field-lable" color="primary"
+                                        *ngFor="let tp of allShowingRequestHistoryTypes" [value]="tp.id">
+                                        {{tp.name }}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="col-12 row">
+                                <div class="alert alert-danger response-message" *ngIf="errorMessage">
+                                    <p>
+                                        {{ errorMessage }}<mat-icon>cancel</mat-icon>
+                                    </p>
+                                </div>
+                                <div class="alert alert-success response-message" *ngIf="successMessage">
+                        
+                                    <p>
+                                        {{ successMessage }} <mat-icon>check_circle</mat-icon>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                <button class="btn btn-primary" type="submit"
+                                    [disabled]="serviceForm.invalid">إضافة</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                        <br /><br />
+                        <app-loading-spinner></app-loading-spinner>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-lg-5 modal" id="model_UpdateServiceCategory" style="display:none;">
+            <div class="modal-content">
+                <span (click)="closeUpdateServiceCategoryModal()" class="close">&times;</span>
+                <div class="card border-0 rounded-lg">
+                    <div class="form-control" style="background-color: #f9f9f9;">
+                        <h1 class="modal-h1-header">تعديل نوع خدمة</h1>
+                    </div>
+                    <div class="card-body" *ngIf="!isLoading">
+                        <form #updateServiceCategoryForm="ngForm"
+                            (ngSubmit)="onUpdateServiceCategory(updateServiceCategoryForm)">
+                            <input type="hidden" id="id" name="id" ngModel />
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" type="name" name="name" required ngModel />
+                                <label for="name">اسم النوع</label>
+                                <div *ngIf="updateServiceCategoryForm.controls['name']!=undefined &&!updateServiceCategoryForm.controls['name'].valid && updateServiceCategoryForm.controls['name']?.touched"
+                                    style="color: red;">اسم نوع الخدمة مطلوب</div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                <button [disabled]="!updateServiceCategoryForm.valid" class="btn btn-primary"
+                                    type="submit">تعديل</button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                        <br /><br />
+                        <app-loading-spinner></app-loading-spinner>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-lg-5 modal" id="model_UpdateService" style="display:none;">
+            <div class="modal-content">
+                <span (click)="closeUpdateServiceModal()" class="close">&times;</span>
+                <div class="card border-0 rounded-lg">
+                    <div class="form-control" style="background-color: #f9f9f9;">
+                        <h1 class="modal-h1-header">تعديل نوع خدمة</h1>
+                    </div>
+                    <div class="card-body" *ngIf="!isLoading">
+                        <form #updateServiceForm="ngForm" (ngSubmit)="onUpdateService(updateServiceForm)">
+                            <input type="hidden" id="id" name="id" ngModel />
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" type="name" name="name" required ngModel />
+                                <label for="name">اسم الخدمة</label>
+                                <div *ngIf="updateServiceForm.controls['name']!=undefined && !updateServiceForm.controls['name'].valid && updateServiceForm.controls['name']?.touched"
+                                    style="color: red;">اسم الخدمة مطلوب</div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="description" type="description" name="description"
+                                    required ngModel />
+                                <label for="description">وصف الخدمة</label>
+                                <div *ngIf="updateServiceForm.controls['description']!=undefined && !updateServiceForm.controls['description'].valid && updateServiceForm.controls['description']?.touched"
+                                    style="color: red;">وصف الخدمة مطلوب</div>
+                            </div>
+                            <div class="form-floating mb-3">
+
+                                <select class="form-control" id="categoryID" type="categoryID" name="categoryID"
+                                    required ngModel>
+                                    <option class="form-control" *ngFor="let ctg of servicesCategories"
+                                        [value]="ctg.id">
+                                        {{ctg.name}}</option>
+                                </select>
+                                <label for="categoryID">نوع الخدمة</label>
+                                <div *ngIf="updateServiceForm.controls['categoryID']!=undefined && updateServiceForm.controls['categoryID'].value=='-1' && updateServiceForm.controls['categoryID']?.touched"
+                                    style="color: red;">نوع الخدمة مطلوب</div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forGender">مخصصة لجنس محدد</label><br /><br />
+
+                                <mat-radio-group name="forGender" class="field-lable" color="primary"
+                                    [ngModel]="this.updateServiceForm.value.forGender">
+                                    <!-- <mat-radio-button  class="field-lable" 
+                                        *ngFor="let op of this.allGenderTypes"  [checked]="op.value===this.updateServiceForm.value.forGender" >                                        
+                                        <span>{{ op.name}}</span>
+                                    </mat-radio-button> -->
+                                    <mat-radio-button class="field-lable" [value]="null" id="rbGenderBoth"
+                                        [checked]="this.updateServiceForm.value.forGender===null">
+                                        <span>لكلا الجنسين</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true" id="rbGenderMale"
+                                        [checked]="this.updateServiceForm.value.forGender==true">
+                                        <span>للذكور فقط</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="false" id="rbGenderFemale"
+                                        [checked]="this.updateServiceForm.value.forGender==false">
+                                        <span>للإناث فقط</span>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forCitizens">مخصصة للمواطنين</label><br /><br />
+                                <mat-radio-group name="forCitizens" class="field-lable" color="primary"
+                                    [ngModel]="this.updateServiceForm.value.forCitizens">
+                                    <!-- <mat-radio-button  class="field-lable"
+                                        *ngFor="let op of this.allCitizenTypes" [checked]="op.value===this.updateServiceForm.value.forCitizens" >
+                                        <span>{{ op.name}}</span> </mat-radio-button> -->
+                                    <mat-radio-button class="field-lable" [value]="null" id="rbCitizensBoth"
+                                        [checked]="this.updateServiceForm.value.forCitizens === null">
+                                        <span>لكل المستخدمين</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true" id="rbOnlyCitizens"
+                                        [checked]="this.updateServiceForm.value.forCitizens==true">
+                                        <span>للمواطنين فقط</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="false" id="rbOnlyForiegners"
+                                        [checked]="this.updateServiceForm.value.forCitizens==false">
+                                        <span>للمقيمين فقط</span>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="forManagers">مخصصة للمدراء</label><br /><br />
+                                <mat-radio-group name="forManagers" class="field-lable" color="primary"
+                                    [ngModel]="this.updateServiceForm.value.forManagers">
+                                    <!-- <mat-radio-button   class="field-lable"
+                                        *ngFor="let op of this.allManagersTypes" [checked]="op.value===this.updateServiceForm.value.forManagers">
+                                        <span>{{ op.name}}</span> </mat-radio-button> -->
+                                    <mat-radio-button class="field-lable" [value]="false" id="rbForAllEmp"
+                                        [checked]="this.updateServiceForm.value.forManagers==false">
+                                        <span>لجميع المستخدمين</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true" id="rbOnlyManagers"
+                                        [checked]="this.updateServiceForm.value.forManagers==true">
+                                        <span>للمدراء فقط</span>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div>
+                                <label for="forGroup">مخصصة لمجموعة محددة</label><br /><br />
+                                <mat-select class="field-lable form-control" name="forGroup" required
+                                    [ngModel]="this.updateServiceForm.value.forGroup">
+                                    <mat-option class="field-lable" color="primary" [value]="-1">
+                                        لجميع المستخدمين</mat-option>
+                                    <mat-option class="field-lable" color="primary" *ngFor="let gr of allGroups"
+                                        [value]="gr.id">
+                                        {{gr.arName }}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="stagesDependent">فترة إتاحة تقديم الطلب</label><br /><br />
+                                <mat-radio-group id="stagesDependent" name="stagesDependent" class="field-lable"
+                                    color="primary" [ngModel]="this.updateServiceForm.value.stagesDependent">
+                                    <!-- <mat-radio-button    class="field-lable"
+                                        *ngFor="let op of this.allStageDependentTypes" [checked]="op.value===this.updateServiceForm.value.stagesDependent">
+                                        <span>{{ op.name}}</span> </mat-radio-button> -->
+                                    <mat-radio-button class="field-lable" [value]="false" id="rbAlwaysAvailable"
+                                        [checked]="this.updateServiceForm.value.stagesDependent==false">
+                                        <span>متاح دائما</span>
+                                    </mat-radio-button>
+                                    <mat-radio-button class="field-lable" [value]="true" id="rbStageDependent"
+                                        [checked]="this.updateServiceForm.value.stagesDependent==true">
+                                        <span>فترات محددة (تتم إدارتها من خلال إدارة المراحل)</span>
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="requestsCount">عدد الطلبات المسموح بها</label><br /><br />
+                                <mat-select class="field-lable form-control" name="requestsCount" required
+                                    [ngModel]="this.updateServiceForm.value.requestsCount">
+
+                                    <mat-option class="field-lable" color="primary"
+                                        *ngFor="let cnt of allRequestsCountTypes" [value]="cnt.id">
+                                        {{cnt.name }}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <label for="showingHistory">عرض العمليات التي تتم على الطلب</label><br /><br />
+                                <mat-select class="field-lable form-control" name="showingHistory" required
+                                    [ngModel]="this.updateServiceForm.value.ShowingHistory">
+
+                                    <mat-option class="field-lable" color="primary"
+                                        *ngFor="let tp of allShowingRequestHistoryTypes" [value]="tp.id">
+                                        {{tp.name }}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                <button class="btn btn-primary" type="submit">تعديل</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                        <br /><br />
+                        <app-loading-spinner></app-loading-spinner>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>

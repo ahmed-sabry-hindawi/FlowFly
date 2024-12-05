@@ -1,0 +1,141 @@
+<div class="col-xs-12" *ngIf="isLoading" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>
+<div *ngIf="!isLoading">
+    <div class="col-12 row">
+        <div class="col-9">
+            <mat-tab-group (selectedTabChange)="onTabChanged($event);">
+                <mat-tab >
+                    <ng-template mat-tab-label>
+                        <div>
+                            <mat-card-header>
+                                <h1 style="color:rgb(13, 110, 253);padding: 50px;margin: 50px;font-family: 'bahij';">
+                                    مهامي
+                                </h1>
+                            </mat-card-header>
+                        </div>
+                    </ng-template>
+                    <ng-container *ngIf="myTasks.length > 0">
+                        <p>عدد المهام : {{tasksCount}}</p>
+                        <table mat-table style="width: 100%;" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th mat-header-cell>رقم الطلب</th>
+                                    <th mat-header-cell>صاحب الطلب</th>
+                                    <th mat-header-cell>الخدمة</th>
+                                    <th mat-header-cell>المهمة</th>
+                                    <th mat-header-cell>تاريخ تقديم الطلب</th>
+                                    <th mat-header-cell>خيارات</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                <tr *ngFor="let tsk of myTasks" style="border-top:solid #f9f9f9;">
+                                    <td mat-cell>{{ tsk.requestId}}</td>
+                                    <td mat-cell>{{ tsk.request.user.fullName }}</td>
+                                    <td mat-cell>{{ tsk.request.service.name }}</td>
+                                    <td mat-cell>{{ tsk.phase.name }}</td>
+                                    <td mat-cell>{{ tsk.request.createdOn | date:'yyyy-MM-dd' }}</td>
+
+                                    <td mat-cell>
+                                        <section class="example-section">
+                                            <button mat-fab color="primary" type="button" title="تفاصيل المهمة"
+                                                (click)="redirectToTaskDetails(tsk)">
+                                                <mat-icon>menu</mat-icon>
+                                            </button>
+                                        </section>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <mat-paginator style="font-family: 'bahij';direction: rtl;" id="paginator"
+                            class="demo-paginator" [length]="tasksCount" [pageIndex]="pageIndex1" [pageSize]="pageSize1"
+                            (page)="handlePageEvent1($event)" aria-label="اختر الصفحة">
+                        </mat-paginator>
+                    </ng-container>
+                    <ng-container *ngIf="myTasks.length==0">
+                        <br /><br /><br /><br />
+                        <p style="font-weight: bold;font-family: 'bahij';text-align: center;color: red;">
+                            لايوجد لديك مهام تحت الإجراء
+                        </p>
+                        <br /><br /><br /><br />
+                    </ng-container>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <div>
+                            <mat-card-header>
+                                <h1 style="color:rgb(13, 110, 253);padding: 50px;margin: 50px;font-family: 'bahij';">
+                                    مهامي المنجزة
+                                </h1>
+                            </mat-card-header>
+                        </div>
+                    </ng-template>
+                    <ng-container *ngIf="myCompletedTasks.length > 0">
+                        <p>عدد المهام : {{completedTasksCount}}</p>
+                        <table mat-table style="width: 100%;" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th mat-header-cell>رقم الطلب</th>
+                                    <th mat-header-cell>صاحب الطلب</th>
+                                    <th mat-header-cell>الخدمة</th>
+                                    <th mat-header-cell>تاريخ تقديم الطلب</th>
+                                    <th mat-header-cell>خيارات</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let tsk of myCompletedTasks">
+                                    <td mat-cell>{{ tsk.requestId}}</td>
+                                    <td mat-cell>{{ tsk.request.user.fullName }}</td>
+                                    <td mat-cell>{{ tsk.request.service.name }}</td>
+                                    <td mat-cell>{{ tsk.request.createdOn | date:'yyyy-MM-dd' }}</td>
+
+                                    <td mat-cell>
+                                        <section class="example-section">
+                                            <button mat-fab color="primary" type="button" title="تفاصيل الطلب"
+                                                (click)="redirectToRequestDetails(tsk.requestId)">
+                                                <mat-icon>menu</mat-icon>
+                                            </button>
+                                        </section>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <mat-paginator style="font-family: 'bahij';direction: rtl;" id="paginator"
+                            class="demo-paginator" [length]="completedTasksCount" [pageIndex]="pageIndex2"
+                            [pageSize]="pageSize2" (page)="handlePageEvent2($event)" aria-label="اختر الصفحة">
+                        </mat-paginator>
+                    </ng-container>
+                    <ng-container *ngIf="myCompletedTasks.length==0">
+                        <br /><br /><br /><br />
+                        <p style="font-weight: bold;font-family: 'bahij';text-align: center;color: red;">
+                            لايوجد لديك مهام مكتملة
+                        </p>
+                        <br /><br /><br /><br />
+                    </ng-container>
+
+
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div class="col-3" style="text-align: center;">
+            <div class="row">
+                <div class="row svg-limited">
+                    <img src="/assets/images/tasks.svg">
+                </div>
+                <br /><br />
+                <div class="row">
+                    <div class="card blue-card">
+                        يمكنك الدخول إلى المهام الظاهرة واتخاذ الإجراء المناسب
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

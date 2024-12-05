@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Login - SB Admin</title>
+    <link src="../../styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body dir="rtl" style="max-width:100%;background-color:white;background-size: 25%;
+background-image:url('/assets/images/authBG2_.png')
+;background-repeat: no-repeat;float: bottom;">
+
+    <div id="layoutAuthentication" style="width: 100%;height: 80%;">
+        <div id="layoutAuthentication_content" style="width: 100%;">
+            <main>
+
+                <div class="row justify-content-center" style="width: 100%;">
+                    <div class="col-12 row">
+                        <div class="col-3">
+
+                        </div>
+                        <div class="col-6">
+                            <div class="alert alert-danger response-message" *ngIf="errorMessage">
+                                <p>
+                                    {{ errorMessage }}<mat-icon>cancel</mat-icon>
+                                </p>
+                            </div>
+                            <div class="alert alert-success response-message" *ngIf="successMessage">
+
+                                <p>
+                                    {{ successMessage }} <mat-icon>check_circle</mat-icon>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4"
+                        style="vertical-align: middle !important;align-content: right;text-align: right;">
+                        <br /><br /><br /><br />
+                        <div class="row svg-limited" style="height: 400px;">
+                            <img src="/assets/images/Login.svg"
+                                style="vertical-align:top;background-color: transparent !important;width: 100%;">
+                        </div>
+                    </div>
+                    <div class="col-lg-4" style="vertical-align: middle !important;text-align: center;">
+                        <br />
+                        <div class="card  shadow-lg border-0 rounded-lg mt-5"
+                            style="vertical-align: middle !important;">
+                            <div class="card-header">
+                                <h3 class="text-center font-weight-light my-4">تسجيل مستخدم جديد</h3>
+                            </div>
+                            <div class="card-body" *ngIf="!isLoading">
+                                <form #registrationForm="ngForm" (ngSubmit)="onSubmitForm(registrationForm)">
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="name" type="name" placeholder="name" name="name"
+                                            minlength="4" required ngModel />
+                                        <label for="name">الاسم الكامل</label>
+                                        <div *ngIf="registrationForm.controls['name']!=undefined && !registrationForm.controls['name'].valid && registrationForm.controls['name']?.touched"
+                                            style="color: red;text-align: right;">الاسم الكامل مطلوب </div>
+                                    </div>
+                                    <div class="form-control mb-3" style="text-align: right;">
+
+                                        <label for="gender">الجنس </label>
+                                        <mat-radio-group id="gender" aria-label="الجنس" name="gender" color="primary"
+                                            required ngModel>
+
+                                            <mat-radio-button class="field-lable" [value]="true">
+                                                <span>ذكر</span>
+                                            </mat-radio-button>
+                                            <mat-radio-button class="field-lable"
+                                                [value]="false"><span>أنثى</span></mat-radio-button>
+                                        </mat-radio-group>
+                                        <div *ngIf="registrationForm.controls['gender']!=undefined && !registrationForm.controls['gender'].valid && registrationForm.controls['gender']?.touched"
+                                            style="color: red;text-align: right;">اختيار الجنس مطلوب </div>
+
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="jobTitle" type="jobTitle" placeholder="jobTitle"
+                                            name="jobTitle" minlength="2" required ngModel />
+                                        <label for="jobTitle">المسمى الوظيفي </label>
+                                        <div *ngIf="registrationForm.controls['jobTitle']!=undefined && !registrationForm.controls['jobTitle'].valid && registrationForm.controls['jobTitle']?.touched"
+                                            style="color: red;text-align: right;">المسمى الوظيفي مطلوب </div>
+                                    </div>
+                                    <div class="form-floating  form-control mb-3">
+
+                                        <mat-form-field placeholder="تاريخ الميلاد" style="width: 100%;">
+                                            <mat-label>تاريخ الميلاد</mat-label>
+                                            <input name="dob" id="dob" type="dob" [min]="minDate" [max]="maxDate"
+                                                matInput required [ngModel]="dobStartDate" [matDatepicker]="picker">
+                                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker [startAt]="dobStartDate"></mat-datepicker>
+                                        </mat-form-field>
+
+                                        <div *ngIf="registrationForm.controls['dob']!=undefined && !registrationForm.controls['dob'].valid && registrationForm.controls['dob']?.touched"
+                                            style="color: red;text-align: right;">تاريخ الميلاد مطلوب </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="email" type="email" name="email"
+                                            placeholder="name@example.com" required ngModel />
+                                        <label for="email">البريد الإلكتروني</label>
+                                        <div *ngIf="registrationForm.controls['email']!=undefined && !registrationForm.controls['email'].valid && registrationForm.controls['email']?.touched"
+                                            style="color: red;text-align: right;">البريد الالكتروني مطلوب </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <!-- <input class="form-control" id="password" type="password" name="password"
+                                            placeholder="Password" required minlength="6" ngModel />
+                                        <label for="password">كلمة المرور</label> -->
+                                        <mat-form-field style="float: none;width: 100%;"> 
+                                            <label for="password" matPrefix >كلمة المرور</label>                                
+                                        <input matInput class="form-control" id="password" [type]="(showPassword === false)?'password':'text'" name="password"
+                                             required minlength="6" ngModel >
+                                     
+                                        
+                                        <mat-icon matSuffix style="cursor: pointer;" (click)="toggleShowPassword()">
+                                            {{!showPassword?'visibility':'visibility_off'}}</mat-icon> 
+                                        </mat-form-field> 
+                                        <div *ngIf="registrationForm.controls['password']!=undefined && !registrationForm.controls['password'].valid && registrationForm.controls['password']?.touched"
+                                            style="color: red;text-align: right;">كلمة المرور مطلوبة على أن لاتقل عن 6
+                                            أحرف وتحتوي على أحرف كبيرة وأحرف صغيرة ورموز وأرقام </div>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <mat-form-field style="font-family: 'Bahij' !important;width: 100%;">
+                                            <input type="text" class="form-control" placeholder="اختر الجنسية"
+                                                aria-label="Number" matInput [matAutocomplete]="auto"
+                                                type="selectNationality" name="selectNationality" required ngModel
+                                                (keydown)="onTypeUserName($event)" />
+                                            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                                <mat-option *ngFor="let ntl of filteredNationalities"
+                                                    style="font-family: 'Bahij' !important;"
+                                                    [value]="ntl.name">{{ntl.name}}</mat-option>
+                                            </mat-autocomplete>
+                                        </mat-form-field>
+                                        <div *ngIf="registrationForm.controls['selectNationality']!=undefined && !registrationForm.controls['selectNationality'].valid && registrationForm.controls['selectNationality']?.touched"
+                                            style="color: red;text-align: right;">اختيار الجنسية مطلوب </div>
+                                    </div>
+                                    <div class="mb-3 ">
+                                        <div class="row col-12">
+
+
+                                            <div class="col-5">
+                                                <label for="personalImage">الصورة الشخصية</label>
+                                            </div>
+                                            <div class="col-5">
+                                                <input (change)="onFileSelected($event)" type="file">
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+
+                                        <button class="btn btn-primary" type="submit"
+                                            [disabled]="!registrationForm.valid">تسجيل
+                                            المستخدم</button>
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xs-12 col-md-6 " *ngIf="isLoading"
+                                style="text-align: center;align-self: center;">
+                                <br /><br />
+                                <app-loading-spinner></app-loading-spinner>
+                            </div>
+                            <div class="card-footer text-center py-3">
+                                <div class="small"><a  routerLink="/login" routerLinkActive="selectedLink" >تسجيل الدخول</a></div>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="col-lg-4" style="text-align: left;direction: ltr;padding-top: 15%;padding-right: 5%;">
+                        <!-- <span style="font-family: forte;font-size: 64px;color: dodgerblue;vertical-align: middle;text-align: center;">
+                                Flow Fly
+                            </span> -->
+                        <div style="float: right;">
+
+                            <div class="card"
+                                style="border: 1px solid ;border-color: #1673FD;text-align: right;padding: 10px;background-color: transparent;">
+                                <h1
+                                    style="font-family: forte !important;background-color: #1673FD;border-radius: 10px;text-align: center;color: white;padding-bottom: 0px;">
+                                    FlowFly</h1>
+                                موقع خدمات إلكترونية يستطيع المستخدم من خلاله تقديم طلبات ومتابعتها واعتماد مهامه
+                                ويمكّن مدير النظام من إنشاء خدمات إلكترونية جديدة بكل يسر وسهولة و بدون مطور
+                                بتقنية <br /><span style="font-weight: bold;">Low-Code No-Code </span><br />
+                                ويمكن الربط مع خدمات إلكترونية خارجية لاستعادة وإرسال البيانات
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>

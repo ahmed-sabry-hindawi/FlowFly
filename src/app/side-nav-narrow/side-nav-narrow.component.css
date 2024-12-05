@@ -1,0 +1,11 @@
+.selectedLink
+{
+    color:white !important;
+   background-color:  rgb(13, 110, 253);
+   font-weight: bold;
+ 
+}
+
+.position-fixed{
+    position: fixed
+}

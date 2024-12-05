@@ -1,0 +1,305 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+
+
+<div class="row">
+ 
+  <br/><br/>
+  <div id="layoutSidenav" class="col-12">
+    <!-- <app-side-nav></app-side-nav> -->
+    
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" (selectedTabChange)="onTabChanged($event)">
+      <mat-tab style="min-width: 100px !important;flex-flow: wrap;">
+        <ng-template mat-tab-label>
+          <div>
+            <mat-card-header>
+              <h1 class="tab_header" style="font-size: large;">
+                <mat-icon style="margin: 5px;float: right;">pie_chart</mat-icon>
+                نسبة الطلبات حسب الخدمة
+              </h1>
+            </mat-card-header>
+          </div>
+        </ng-template><br /><br />
+        <ng-container>
+          <div class="row col-12">
+           
+            <div class="col-5">
+              <div style="padding-right: 20px;width: 100%;margin-right: 10px;">
+                <br />
+                <div style="width: 100%;">
+                  <div class="section-header" style="width: 100%;">عدد طلبات الخدمات</div>
+                </div>
+                <br />
+                <div *ngIf="this.servicesRequestsCountArr!=null && this.servicesRequestsCountArr.length >0"
+                  class="bordered-table">
+                  <table mat-table style="width: 100%;">
+                    <thead>
+                      <tr>
+                        <th mat-header-cell style="text-align: center;">الخدمة</th>
+                        <th mat-header-cell style="text-align: center;">عدد الطلبات </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let srv of this.servicesRequestsCountArr" style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">{{ srv.name}}</td>
+                        <td mat-cell style="text-align: center;">{{ srv.y}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-7" style="text-align: center;margin-top: -100px;">   
+              <br/>          
+                <div id="containerPie" style="width: 100%; height: 800px;"></div>
+              
+            </div>
+
+          </div>
+
+
+        </ng-container>
+      </mat-tab>
+      <mat-tab style="min-width: 100px !important;flex-flow: wrap;">
+        <ng-template mat-tab-label>
+          <div>
+            <mat-card-header>
+              <h1 class="tab_header" style="font-size: large;">
+                <mat-icon style="margin: 5px;float: right;">bar_chart</mat-icon>
+                عدد الطلبات لكل خدمة مصنفة حسب حالة الطلب
+              </h1>
+            </mat-card-header>
+          </div>
+        </ng-template><br /><br />
+        <ng-container >
+          <div class="row col-12" style="min-height: 800px;">
+            <div class="col-5">
+              <div style="padding-right: 10px;width: 100%;margin-right: 10px;">
+                <br />
+                <div>
+                  <div class="section-header" style="width: 100%;">  عدد الطلبات لكل خدمة مصنفة حسب حالة الطلب</div>
+                </div>
+                <br />
+                <div
+                  *ngIf="this.servicesRequestsCount!=null && this.servicesRequestsCount.length >0"
+                  class="bordered-table">
+                  <br />
+                  <table mat-table style="width: 100%;">
+                    <thead>
+                      <tr>
+                        <th mat-header-cell style="padding: 0px;margin:0px;">الخدمة</th>
+                        <th mat-header-cell style="padding: 0px;margin:0px;">معتمد </th>
+                        <th mat-header-cell style="padding: 0px;margin:0px;">مرفوض </th>
+                        <th mat-header-cell style="padding: 0px;margin:0px;">ملغى </th>
+                        <th mat-header-cell style="padding: 0px;margin:0px;">مكتمل </th>
+                        <th mat-header-cell style="padding: 0px;margin:0px;">تحت الإجراء </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let srv of this.servicesRequestsCount" style="border-top:solid #f9f9f9;">
+                        <td mat-cell>{{ srv.serviceName}}</td>
+                        <td mat-cell>{{ srv.approvedRequestsCount}}</td>
+                        <td mat-cell>{{ srv.rejectedRequestsCount}}</td>
+                        <td mat-cell>{{ srv.canceledRequestsCount}}</td>
+                        <td mat-cell>{{ srv.closedRequestsCount}}</td>
+                        <td mat-cell>{{ srv.underProcessRequestsCount}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="col-7" id="containerBar" ></div>
+
+          </div>
+        </ng-container>
+      </mat-tab>
+      <mat-tab style="min-width: 80px !important;flex-flow: wrap;">
+        <ng-template mat-tab-label>
+          <div>
+            <mat-card-header>
+              <h1 class="tab_header" style="font-size: large;">
+                <mat-icon style="margin: 5px;float: right;">show_chart</mat-icon>
+                استخدام البوابة
+              </h1>
+            </mat-card-header>
+          </div>
+        </ng-template><br /><br />
+        <ng-container style="text-align: center;">
+          <div class="row col-12">
+            <div class="col-5">
+              <div style="padding-right: 20px;width: 100%;margin-right: 10px;">
+                <br />
+                <div style="width: 100%;">
+                  <div class="section-header" style="width: 100%;">عدد طلبات الخدمات</div>
+                </div>
+                <br />
+                <div *ngIf="this.servicesRequestsCountArr!=null && this.servicesRequestsCountArr.length >0"
+                  class="bordered-table">
+                  <table mat-table style="width: 100%;">
+                    <thead>
+                      <tr>
+                        <th mat-header-cell style="text-align: center;">الخدمة</th>
+                        <th mat-header-cell style="text-align: center;">عدد الطلبات </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let srv of this.servicesRequestsCountArr" style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">{{ srv.name}}</td>
+                        <td mat-cell style="text-align: center;">{{ srv.y}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-7" style="padding-right:200px;padding-top: 100px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions"
+                style="width: 100%; height: 100%"></highcharts-chart>
+            </div>
+
+          </div>
+        </ng-container>
+      </mat-tab>
+      <mat-tab style="min-width: 100px !important;flex-flow: wrap;">
+        <ng-template mat-tab-label>
+          <div>
+            <mat-card-header>
+              <h1 class="tab_header" style="font-size: large;">
+                <mat-icon style="margin: 5px;float: right;">bubble_chart</mat-icon>
+                رسم بياني فقاعي : انبعاثات الكربون
+              </h1>
+            </mat-card-header>
+          </div>
+        </ng-template><br /><br />
+        <ng-container>
+          <div class="row col-12">
+            <div class="col-5">
+              <div style="padding-right: 20px;width: 100%;margin-right: 10px;">
+                <br />
+                <div style="width: 100%;">
+                  <div class="section-header" style="width: 100%;">عدد طلبات الخدمات</div>
+                </div>
+                <br />
+                <div *ngIf="this.servicesRequestsCountArr!=null && this.servicesRequestsCountArr.length >0"
+                  class="bordered-table">
+                  <table mat-table style="width: 100%;">
+                    <thead>
+                      <tr>
+                        <th mat-header-cell style="text-align: center;">الخدمة</th>
+                        <th mat-header-cell style="text-align: center;">عدد الطلبات </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let srv of this.servicesRequestsCountArr" style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">{{ srv.name}}</td>
+                        <td mat-cell style="text-align: center;">{{ srv.y}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-7">
+              <div id="containerBuble" style="width: 100%; height: 100%;"></div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+      <mat-tab style="min-width: 100px !important;flex-flow: wrap;">
+        <ng-template mat-tab-label>
+          <div>
+            <mat-card-header>
+              <h1 class="tab_header" style="font-size: large;">
+                <mat-icon style="margin: 5px;float: right;">bubble_chart</mat-icon>
+                خريطة تفاعلية
+              </h1>
+            </mat-card-header>
+          </div>
+        </ng-template><br /><br />
+        <ng-container style="min-height: 800px;">
+          <div class="row col-12">
+            <div class="col-5">
+              <div style="padding-right: 20px;width: 100%;margin-right: 10px;">
+                <br />
+                <div style="width: 100%;">
+                  <div class="section-header" style="width: 100%;">عدد الطلبات حسب المنطقة (بيانات تجريبية)</div>
+                </div>
+                <br />
+                <div *ngIf="this.servicesRequestsCountArr!=null && this.servicesRequestsCountArr.length >0"
+                  class="bordered-table">
+                  <table mat-table style="width: 100%;">
+                    <thead>
+                      <tr>
+                        <th mat-header-cell style="text-align: center;">الخدمة</th>
+                        <th mat-header-cell style="text-align: center;">عدد الطلبات </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">الرياض</td>
+                        <td mat-cell style="text-align: center;">30</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">تبوك</td>
+                        <td mat-cell style="text-align: center;">11</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">جيزان</td>
+                        <td mat-cell style="text-align: center;">12</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">نجران</td>
+                        <td mat-cell style="text-align: center;">13</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">المدينة</td>
+                        <td mat-cell style="text-align: center;">15</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">حائل</td>
+                        <td mat-cell style="text-align: center;">16</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">القصيم</td>
+                        <td mat-cell style="text-align: center;">70</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">الشرقية</td>
+                        <td mat-cell style="text-align: center;">20</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">الباحة</td>
+                        <td mat-cell style="text-align: center;">21</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">عسير</td>
+                        <td mat-cell style="text-align: center;">22</td>
+                      </tr>
+                      <tr style="border-top:solid #f9f9f9;">
+                        <td mat-cell style="text-align: center;">مكة المكرمة</td>
+                        <td mat-cell style="text-align: center;">23</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-7">
+              <div id="containerMap" style="width: 100%; min-height: 600px;"></div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+</div>

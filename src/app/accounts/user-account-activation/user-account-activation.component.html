@@ -1,0 +1,15 @@
+<div class="container text-center mt-5">
+    <div  *ngIf="activationStatus===''"
+                                style="text-align: center;align-self: center;">
+                                <br /><br />
+                                <app-loading-spinner></app-loading-spinner>
+                            </div>
+    <h1 *ngIf="activationStatus === 'success'">تم تفعيل الحساب بنجاح !</h1>
+    <h1 *ngIf="activationStatus === 'error'">حصل خطأ , يرجى المحاولة لاحقا !</h1>
+    <p *ngIf="activationStatus === 'success'">
+      You can now <a routerLink="/login">log in</a>.
+    </p>
+    <p *ngIf="activationStatus === 'error'">
+     يرجى التواصل مع الدعم الفني
+    </p>
+  </div>

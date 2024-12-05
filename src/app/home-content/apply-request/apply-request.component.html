@@ -1,0 +1,375 @@
+<style type="text/css">
+    td {
+        margin: 30px !important;
+        padding: 30px !important;
+    }
+
+    th {
+        margin: 30px !important;
+        padding: 30px !important;
+    }
+
+    button {
+        margin: 10px !important;
+        padding: 10px !important;
+    }
+
+    .card {
+        margin: 30px !important;
+        padding: 30px !important;
+    }
+</style>
+<div *ngIf="isDataLoaded">
+    <div class="col-12 row">
+        <div class="alert alert-danger response-message" *ngIf="errorMessage">
+            <p>
+                {{ errorMessage }}<mat-icon>cancel</mat-icon>
+            </p>
+        </div>
+        <div class="alert alert-success response-message" *ngIf="successMessage">
+
+            <p>
+                {{ successMessage }} <mat-icon>check_circle</mat-icon>
+            </p>
+        </div>
+    </div>
+    <div class="row col-12">
+        <div class="col-9">
+            <div class="card">
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <i class="fas fa-table me-1"></i>
+                    <h1 style="text-align: center;font-family: 'Bahij';">طلب {{serviceDetails.name}}</h1>
+                </div>
+                <br />
+                <form [formGroup]="RequestFormGroup" *ngIf="RequestFormGroup"
+                    (ngSubmit)="sendRequest(RequestFormGroup)">
+                    <div class="small-grid row" *ngIf="RequestFormGroup.value.RequestControls.length>0">
+
+                        <mat-card *ngFor="let requestControl of getControls();let i = index"
+                            style="width: 100% !important;border: 0;" id="id+{{i}}" class="xyz">
+                            <ng-container [formGroup]="requestControl">
+                                <div style="text-align: center;font-family: 'Bahij';width: 100%;">
+
+                                    <div class="col-md-12 row"
+                                        style="text-align: center;font-family: 'Bahij';width: 100%;">
+                                        <mat-label class="field-lable form-floating mb-3 col-md-126">
+                                            <br />
+                                            <div class="col-md-12">
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==1"
+                                                    style="vertical-align: top;">edit</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==2"
+                                                    style="vertical-align: top;">arrow_drop_down_circle</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==3"
+                                                    style="vertical-align: top;">radio_button_checked</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==4"
+                                                    style="vertical-align: top;">check_box</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==5"
+                                                    style="vertical-align: top;">attach_file</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==6"
+                                                    style="vertical-align: top;">wrap_text</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==7"
+                                                    style="vertical-align: top;">calendar_today</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==8"
+                                                    style="vertical-align: top;">person_add</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==9"
+                                                    style="vertical-align: top;">filter_1</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==10"
+                                                    style="vertical-align: top;">date_range</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==11"
+                                                    style="vertical-align: top;">perm_media</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==12"
+                                                    style="vertical-align: top;">notes</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==13"
+                                                    style="vertical-align: top;">star_half</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==14"
+                                                    style="vertical-align: top;">move_to_inbox</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==15"
+                                                    style="vertical-align: top;">arrow_drop_down_circle</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==16"
+                                                    style="vertical-align: top;">radio_button_checked</mat-icon>
+                                                <mat-icon *ngIf="requestControl.get('elementTypeID')?.value==17"
+                                                    style="vertical-align: top;">check_box</mat-icon>
+                                                {{requestControl.get('title')?.value}}
+                                                <span style="color: #fa0123;"
+                                                    *ngIf="requestControl.get('isMandatory')?.value">
+                                                    *</span>
+                                            </div><br />
+                                            <div class="col-md-12">
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==1">
+                                                    <input class="form-control" type="text"
+                                                        formControlName="controlData" />
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==2">
+                                                    <mat-select class="field-lable form-control"
+                                                        formControlName="controlData">
+                                                        <mat-option class="field-lable" color="primary"
+                                                            *ngFor="let ds of requestControl.get('dataSource')?.value.dataSourceItems"
+                                                            [value]="ds.id">
+                                                            {{ds.arName }}</mat-option>
+                                                    </mat-select>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==3">
+                                                    <mat-radio-group aria-label="اختر" class="field-lable" [name]="requestControl.get('name')?.value"
+                                                        color="primary" formControlName="controlData"  >
+                                                        <mat-radio-button class="field-lable"
+                                                            *ngFor="let ds of requestControl.get('dataSource')?.value.dataSourceItems"
+                                                            value="{{ds.id}}" [name]="requestControl.get('name')?.value">
+                                                            {{ds.arName }}</mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==4">
+                                                    <section>
+                                                        <mat-checkbox class="field-lable" color="primary"
+                                                            formControlName="controlData"
+                                                            (change)="onCheckChange($event,requestControl)"
+                                                            *ngFor="let ds of requestControl.get('dataSource')?.value.dataSourceItems"
+                                                            [value]="ds.id.toString()">
+                                                            {{ds.arName }}
+                                                        </mat-checkbox>
+                                                    </section>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==5">
+                                                    <button type="button" mat-raised-button
+                                                        (click)="fileInput.click()">اختر
+                                                        ملف</button>
+                                                    <input hidden
+                                                        (change)="onFileSelected($event,'file'+requestControl.get('formElementID')?.value)"
+                                                        formControlName="controlData"
+                                                        [required]="requestControl.get('isMandatory')?.value" #fileInput
+                                                        type="file"
+                                                        [id]="'file'+requestControl.get('formElementID')?.value"
+                                                        [name]="'file'+requestControl.get('formElementID')?.value">
+
+                                                    <label>{{
+                                                        getFileName('file'+requestControl.get('formElementID')?.value)}}</label>
+                                                    <br /><span style="color: gray;font-size:small;">صيغ الملف المسموحة
+                                                        pdf docx xlsx</span>
+                                                    <br /><span style="color: gray;font-size:small;">حجم الملف لايتجاوز
+                                                        1 ميجا</span>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==6">
+                                                    <textarea class="form-control col-12" rows="2"
+                                                        formControlName="controlData"
+                                                        [required]="requestControl.get('isMandatory')?.value"
+                                                        style="resize: none;"></textarea>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==7">
+                                                    <mat-form-field class="form-control">
+                                                        <mat-label>اختر تاريخ</mat-label>
+                                                        <input formControlName="controlData"
+                                                            [required]="requestControl.get('isMandatory')?.value"
+                                                            matInput [matDatepicker]="picker">
+                                                        <mat-hint>MM/DD/YYYY</mat-hint>
+                                                        <mat-datepicker-toggle matIconSuffix
+                                                            [for]="picker"></mat-datepicker-toggle>
+                                                        <mat-datepicker #picker></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==8">
+                                                    <mat-form-field style="font-family: 'Bahij' !important;width: 100%;"
+                                                        *ngIf="requestControl.get('elementTypeID')?.value==8">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="اختر مستخدم" formControlName="controlData"
+                                                            aria-label="Number" matInput [matAutocomplete]="auto"
+                                                            type="selectedUser" name="selectedUser"
+                                                            [required]="requestControl.get('isMandatory')?.value"
+                                                            (keydown)="onTypeUserName($event)" />
+                                                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                                            <mat-option *ngFor="let user of usersFiltered"
+                                                                style="font-family: 'Bahij' !important;"
+                                                                [value]="user.fullName">{{user.fullName}}</mat-option>
+                                                        </mat-autocomplete>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==9">
+                                                    <input class="form-control" formControlName="controlData"
+                                                        [required]="requestControl.get('isMandatory')?.value"
+                                                        type="number" />
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==10">
+                                                    <mat-form-field class="form-control"
+                                                        *ngIf="requestControl.value.fromDateToDateControlData">
+                                                        <mat-label>اختر من إلى تاريخ</mat-label>
+                                                        <mat-date-range-input [rangePicker]="picker" matinput
+                                                            [formGroup]="requestControl.value.fromDateToDateControlData"
+                                                            [required]="requestControl.get('isMandatory')?.value">
+                                                            <input matStartDate formControlName="start"
+                                                                placeholder="Start date">
+                                                            <input matEndDate formControlName="end"
+                                                                placeholder="End date">
+                                                        </mat-date-range-input>
+                                                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                                                        <mat-datepicker-toggle matIconSuffix
+                                                            [for]="picker"></mat-datepicker-toggle>
+                                                        <mat-date-range-picker #picker></mat-date-range-picker>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==11">
+                                                    <button type="button" mat-raised-button
+                                                        (click)="imageInput.click()">اختر
+                                                        صورة</button>
+                                                    <input hidden
+                                                        (change)="onFileSelected($event,'img_'+requestControl.get('formElementID')?.value)"
+                                                        formControlName="controlData"
+                                                        [required]="requestControl.get('isMandatory')?.value"
+                                                        #imageInput type="file"
+                                                        [id]="'img_'+requestControl.get('formElementID')?.value"
+                                                        [name]="'img_'+requestControl.get('formElementID')?.value">
+
+                                                    <label>{{
+                                                        getFileName('img_'+requestControl.get('formElementID')?.value)}}</label>
+                                                    <br /><span style="color: gray;font-size:small;">صيغ الصورة المسموحة
+                                                        png jpeg jpg</span>
+                                                    <br /><span style="color: gray;font-size:small;">حجم الملف لايتجاوز
+                                                        1 ميجا</span>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==12">
+                                                    <label>{{requestControl.get('controlData')?.value}}</label>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==13">
+                                                    <ngb-rating [max]=5 formControlName="controlData"></ngb-rating>
+                                                </div>
+
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==14">
+                                                    <label title="abc">{{
+                                                        externalDatasourceValuesDictionary.get(requestControl.get('externalSourceID')?.value)
+                                                        }}</label><br />
+                                                   
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==15">
+                                                    <mat-select class="field-lable form-control"
+                                                        formControlName="controlData">
+                                                        <mat-option class="field-lable" color="primary"
+                                                            *ngFor="let ds of externalDatasourceListsDictionary.get(requestControl.get('externalSourceID')?.value)"
+                                                            [value]="ds.name">
+                                                            {{ds.name }}</mat-option>
+                                                    </mat-select>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==16">
+                                                    <mat-radio-group aria-label="اختر" class="field-lable"
+                                                        color="primary" formControlName="controlData" name="radio">
+                                                        <mat-radio-button class="field-lable"
+                                                            *ngFor="let ds of externalDatasourceListsDictionary.get(requestControl.get('externalSourceID')?.value)"
+                                                            value="{{ds.name}}">
+                                                            {{ds.name }}</mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div>
+                                                <div *ngIf="requestControl.get('elementTypeID')?.value==17">
+                                                    <section>
+                                                        <mat-checkbox class="field-lable" color="primary"
+                                                            formControlName="controlData"
+                                                            (change)="onExternalCheckChange($event,requestControl)"
+                                                            *ngFor="let ds of externalDatasourceListsDictionary.get(requestControl.get('externalSourceID')?.value)"
+                                                            [value]="ds.name.toString()">
+                                                            {{ds.name }}
+                                                        </mat-checkbox>
+                                                    </section>
+                                                </div>
+
+                                            </div>
+                                        </mat-label>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </mat-card>
+                    </div>
+
+                    <br /><br />
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="card">
+                                <h3 class="section-header">
+                                    مسار عمل الطلب</h3>
+                                <mat-card-actions>
+                                    <mat-card
+                                        style="background-color: #fff;width: 100%;align-items: center;
+                                      border: 3.5px;border-radius: 10px;border-color: #18d318;border-style: dashed;box-shadow: none;">
+                                        <p style="font-weight: bold;padding-top: 10px;"><mat-icon
+                                                style="vertical-align: bottom !important;">send</mat-icon> تقديم الطلب
+                                        </p>
+                                    </mat-card>
+                                </mat-card-actions>
+                                <mat-card-actions *ngFor="let phase of formDetails.approvalsPhases"
+                                    style="width: 100%;margin: 0px;">
+                                    <mat-card class="grid-card" [ngClass]="phase.styleClass">
+
+
+                                        <div class="col-md-12 row">
+                                            <div class="col-1" style="text-align: right;">
+                                                <mat-icon>group</mat-icon>
+                                            </div>
+                                            <div class="col-10" style="align-self: center;">
+                                                <p style="font-weight: bold;padding-top: 10px;text-align: center;">
+                                                    {{phase.name}} </p>
+                                            </div>
+                                            <div class="col-1" style="text-align: left;">
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 row">
+                                            <div class="col-5">
+                                                <h3 style="text-align: right;font-family: 'Bahij';">اعتماد
+                                                    {{getPhaseName(phase.approvalTypeID)}}</h3>
+                                                <p *ngIf="phase.approvalTypeID==1"> {{
+                                                    getGroupName(phase.groupID)
+                                                    }}
+                                                </p>
+                                                <p *ngIf="phase.approvalTypeID==2"> {{
+                                                    getDepartmentName(phase.departmentID) }}
+                                                </p>
+                                            </div>
+                                            <div class="col-7">
+
+                                            </div>
+
+                                        </div>
+                                    </mat-card>
+                                </mat-card-actions>
+                                <mat-card-actions>
+
+                                    <mat-card
+                                        style="background-color: #fff;width: 100%;align-items: center;
+                                         border: 3.5px;border-radius: 10px;border-color: #0d6efd;border-style: dashed;box-shadow: none;">
+                                        <p style="font-weight: bold;padding-top: 10px;"><mat-icon
+                                                style="vertical-align: bottom !important;">done</mat-icon> اكتمال الطلب
+                                        </p>
+                                    </mat-card>
+                                </mat-card-actions>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0"
+                        style="text-align: left !important;">
+                        <button class="btn btn-primary field-lable" type="submit">إرسال
+                            <mat-icon>send</mat-icon></button>
+                        <button class="btn btn-primary field-lable" (click)="redirectToMyServices()">رجوع
+                            <mat-icon>arrow_back</mat-icon></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-3" style="height: 100%;">
+            <div class="col-12">
+                <div class="row svg-limited" style="height: 350px;padding-top: 60px;">
+                    <img src="/assets/images/ApplyRequest.svg" style="vertical-align:top;">
+                </div>
+                <div class="row" style="height: 350px;">
+                    <div class="card" style="border: 1px solid ;border-color: #1673FD;text-align: right;padding: 10px;">
+                        <span style="font-weight: bold; font-family: 'Bahij';">وصف الخدمة</span><br />
+                        {{ serviceDetails.description}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+<div class="col-xs-12" *ngIf="!isDataLoaded" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>

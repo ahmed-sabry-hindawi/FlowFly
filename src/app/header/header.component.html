@@ -1,0 +1,78 @@
+<div style="max-width: 100%;height: 12%;" dir="ltr">
+
+    <mat-toolbar
+        style="margin: 10px 10px 0px 10px !important;background-color: black;min-height: 100% !important;color: white; border-radius: 10px;">
+
+
+        <button mat-icon-button *ngIf="!showIcons" [matMenuTriggerFor]="menu" class="example-icon" ngbTooltip="المزيد"
+            aria-label="Example icon-button with menu icon">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!showIcons" (click)="onLogout()" ngbTooltip="تسجيل خروج">
+            <mat-icon style="color: white;">exit_to_app</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!showIcons" (click)="redirectToHome()" ngbTooltip="الرئيسية">
+            <mat-icon style="color: white;">home</mat-icon>
+        </button>
+
+
+
+        <a style="width: 100%;text-align: center !important;">
+            <span style="text-align: center !important;font-family: bahij;width: 100%;font-size: larger;">
+                {{mainTitle}} <br />
+                <span style="font-size: smaller;">{{subTitle}}</span>
+            </span>
+
+
+        </a>
+        <img [src]="SystemLogoDirectory" style="width: 100px;padding-right: 10px;">
+
+    </mat-toolbar>
+
+    <mat-menu #menu="matMenu" [overlapTrigger]="true">
+        <button mat-menu-item>
+            <a class="nav-link" style="font-family: 'Bahij' !important;" routerLink="/home/my-services"
+                routerLinkActive="selectedLink">
+                <mat-icon style="margin: 3px;">public</mat-icon>
+                خدماتي
+
+            </a>
+        </button>
+        <button mat-menu-item>
+            <a class="nav-link" style="font-family: 'Bahij' !important;" routerLink="/home/my-tasks" routerLinkActive="selectedLink">
+
+                <mat-icon style="margin: 3px;">work</mat-icon>
+                مهامي              
+            </a>
+        </button>
+        <button mat-menu-item>
+            <a class="nav-link" style="font-family: 'Bahij' !important;"  routerLink="/home/my-requests" routerLinkActive="selectedLink">
+                <mat-icon style="margin: 3px;">apps</mat-icon>
+                طلباتي
+            </a>
+        </button>
+        <button mat-menu-item>
+            <a class="nav-link" style="font-family: 'Bahij' !important;" routerLink="/home/my-info" routerLinkActive="selectedLink">
+                <mat-icon style="margin: 3px;">info</mat-icon>
+                بياناتي
+            </a>
+        </button>
+        <button mat-menu-item>
+            <a class="nav-link" style="font-family: 'Bahij' !important;" routerLink="/home/flowfly" routerLinkActive="selectedLink">
+                <img style="vertical-align: super;margin: 3px;" src="/assets/icons/CircleLogoNoLeather.png" width="25"  >
+                 FlowFly 
+            </a>
+        </button>
+        <button mat-menu-item>
+            <a class="nav-link" style="font-family: 'Bahij' !important;" routerLink="/admin-panel/site-settings" routerLinkActive="selectedLink" >
+                <mat-icon style="float: left;">settings</mat-icon>
+                الإعدادات</a>
+        </button>
+        <button mat-menu-item (click)="onLogout()">
+            <span style="font-family: 'Bahij' !important;">
+                <mat-icon style="float: left;">directions_run</mat-icon>
+                تسجيل خروج
+            </span>
+        </button>
+    </mat-menu>
+</div>

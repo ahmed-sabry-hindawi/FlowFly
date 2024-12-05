@@ -1,0 +1,20 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strict": false,
+    "outDir": "./out-tsc/app",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    
+    "types": [
+      "@angular/localize"
+    ]
+  },
+  "files": [
+    "src/main.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}

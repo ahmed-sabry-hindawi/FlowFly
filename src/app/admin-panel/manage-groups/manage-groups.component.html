@@ -1,0 +1,327 @@
+<div class="col-xs-12" *ngIf="isLoading" style="text-align: center;align-self: center;">
+    <br /><br />
+    <img src="/assets/images/SwallowCatch.png">
+    <br /><br /> <br /><br />
+    <app-loading-spinner></app-loading-spinner>
+</div>
+<div *ngIf="!isLoading">
+    <div class="col-12 row">
+        <div class="alert alert-danger response-message" *ngIf="errorMessage">
+            <p>
+                {{ errorMessage }}<mat-icon>cancel</mat-icon>
+            </p>
+        </div>
+        <div class="alert alert-success response-message" *ngIf="successMessage">
+
+            <p>
+                {{ successMessage }} <mat-icon>check_circle</mat-icon>
+            </p>
+        </div>
+    </div>
+    <div class="col-12 row">
+        <div class="col-9">
+            <br />
+            <div class="row col-12">
+                <div class="col-6">
+                    <div style="margin: 1rem;">
+
+                        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"
+                            href="#!"><i class="fas fa-bars"></i></button>
+                        <form class="d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                            <div class="input-group">
+                                <input class="form-control"
+                                    style="direction: rtl;border-radius:0rem 0.375rem 0.375rem 0rem;" type="text"
+                                    placeholder="ابحث عن مجموعة ..." aria-label="Search for..." name="searchText"
+                                    (change)="onSearch()" aria-describedby="btnNavbarSearch" [(ngModel)]="searchText" />
+                                <button class="btn btn-primary"
+                                    style="direction: rtl;border-radius:0.375rem 0rem 0rem 0.375rem;vertical-align: middle;"
+                                    id="btnNavbarSearch" type="button" (click)="onSearch()">
+                                    <mat-icon>search</mat-icon></button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="col-6">
+
+                    <div style="text-align: left;margin: 1rem;">
+                        <button class="btn btn-success field-lable" (click)="openAddGroupDialog()">إضافة مجموعة
+                            جديدة
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <ng-container *ngIf="allGroups!=null && allGroups.length>0">
+
+                <table mat-table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th mat-header-cell>المجموعة</th>
+                            <th mat-header-cell>اسم المجموعة</th>
+                            <th mat-header-cell>وصف المجموعة</th>
+                            <th mat-header-cell>حالة المجموعة</th>
+                            <th mat-header-cell>تفعيل/تعطيل</th>
+                            <th>خيارات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let group of allGroups">
+
+                            <tr>
+
+                                <td mat-cell>{{ group.name}}</td>
+                                <td mat-cell>{{ group.arName }}</td>
+                                <td mat-cell>{{ group.description }}</td>
+                                <td mat-cell>{{ group.isActive ? 'فعالة' : 'معطلة'}}</td>
+                                <td mat-cell>
+                                    <section class="example-section">
+                                        <mat-slide-toggle class="example-margin" (click)="onChangeGroupStatus(group)"
+                                            [checked]='group.isActive' color="alert-success">
+
+                                        </mat-slide-toggle>
+                                    </section>
+                                </td>
+                                <td>
+                                    <button mat-fab color="primary" type="button"
+                                        (click)="openUpdateGroupDialog(group.id)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <mat-accordion>
+                                        <mat-expansion-panel (opened)="panelOpenState = true"
+                                            (closed)="panelOpenState = false">
+                                            <mat-expansion-panel-header
+                                                style="align-content: center !important;align-items: center !important;border-color: rgb(13, 110, 253);color:rgb(13, 110, 253);font-weight: bold !important;">
+                                                <h3
+                                                    style="align-content: center !important;align-items: center !important;font-family: 'bahij';">
+                                                    اضغط هنا لاستعراض المستخدمين
+                                                </h3>
+
+                                            </mat-expansion-panel-header>
+
+                                            <div
+                                                *ngIf="group.users && group.users.length >0;then content else other_content">
+                                                here is ignored</div>
+                                            <ng-template #content>
+                                                <table class="col-xs-6" mat-table
+                                                    style="width: 100%;font-family: 'bahij';">
+                                                    <tr>
+                                                        <th>الاسم</th>
+                                                        <th>المسمى الوظيفي</th>
+                                                        <th>اسم المستخدم</th>
+                                                        <th>خيارات</th>
+                                                    </tr>
+
+                                                    <tr *ngFor="let user of group.users">
+                                                        <td>{{user.fullName}}</td>
+                                                        <td>المسمى الوظيفي</td>
+                                                        <td>{{ user.userName }}</td>
+                                                        <td>
+                                                            <button mat-fab style="background-color: red;"
+                                                                (click)="onDeleteUserFromGroup(user.userId,group.id)">
+                                                                <mat-icon>delete</mat-icon>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </ng-template>
+                                            <ng-template #other_content>لايوجد مستخدمين مضافين على
+                                                المجموعة</ng-template>
+
+                                            <section>
+                                                <div class="example-button-row" style="align-content: start;">
+                                                    <button mat-fab color="primary" style="background-color: green;"
+                                                        (click)="openAddUserToGroupDialog(group.id)">
+                                                        <mat-icon>add</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </section>
+
+                                        </mat-expansion-panel>
+                                    </mat-accordion>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </ng-container>
+            <ng-container *ngIf="allGroups==null || allGroups.length==0">
+
+                <div style="text-align: center;">
+                    <br />
+                    <h1>لا يوجد بيانات </h1>
+                    <img src="/assets/images/NotFound.svg" style="vertical-align:top;">
+                </div>
+            </ng-container>
+        </div>
+        <div class="col-3" style="text-align: center;">
+            <div class="row">
+                <div class="row svg-limited">
+                    <img src="/assets/images/manage-groups.svg">
+                </div>
+
+                <div class="row" style="padding-top: 50px;">
+                    <div class="card blue-card">
+                        إدارة مجموعات الاعتماد للطلبات , يمكنك إضافة مستخدمين إلى المجموعات الظاهرة أو إضافة مجموعة
+                        اعتماد أخرى
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-4" style="vertical-align: top;text-align: center;padding-top: 20px;">
+            <div class="row col-12">
+                <div class="row svg-limited" style="padding-top: 20px;text-align: center;">
+                    <img src="/assets/images/manage-groups.svg" style="vertical-align:top;">
+                </div>
+
+                <div class="row" style="padding-top: 50px">
+                    <div class="card" style="border: 1px solid ;border-color: #1673FD;text-align: right;padding: 10px;">
+                        إدارة مجموعات الاعتماد للطلبات , يمكنك إضافة مستخدمين إلى المجموعات الظاهرة أو إضافة مجموعة
+                        اعتماد أخرى
+                    </div>
+                </div>
+
+            </div>
+
+        </div> -->
+    </div>
+</div>
+
+
+
+<br />
+<div class="row justify-content-center">
+    <div class="col-lg-5 modal" id="model_AddGroups" style="display:none;">
+        <div class="modal-content">
+            <span (click)="closeAddGroupModal()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <h1 class="modal-h1-header">إضافة مجموعة اعتماد</h1>
+                </div>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #groupForm="ngForm" (ngSubmit)="onAddGroups(groupForm)">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" type="name" name="name" required ngModel />
+                            <label for="name">اسم المجموعة بالانكليزية</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="arName" type="arName" name="arName" required ngModel />
+                            <label for="arName">اسم المجموعة</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="description" type="description" name="description" required
+                                ngModel />
+                            <label for="description">وصف المجموعة</label>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">إضافة مجموعة</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-lg-5 modal" id="model_AddUserToGroups" style="display:none;">
+        <div class="modal-content">
+            <span (click)="closeAddUserToGroupDialog()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <h1 class="modal-h1-header">إضافة مستخدم إلى مجموعة</h1>
+                </div>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #addUserToGroupForm="ngForm" (ngSubmit)="onAddUserToGroup(addUserToGroupForm)">
+
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" disabled="disabled" type="name" name="name" required
+                                ngModel />
+                            <label for="name">اسم المجموعة بالانكليزية</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="arName" disabled="disabled" type="arName" name="arName"
+                                required ngModel />
+                            <label for="arName">اسم المجموعة</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <mat-form-field style="font-family: 'Bahij' !important;width: 100%;">
+                                <input type="text" class="form-control" placeholder="اختر مستخدم" aria-label="Number"
+                                    matInput [matAutocomplete]="auto" type="selectedUser" name="selectedUser" required
+                                    ngModel (keydown)="onTypeUserName($event)" />
+                                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                    <mat-option *ngFor="let user of usersFiltered"
+                                        style="font-family: 'Bahij' !important;"
+                                        [value]="user.fullName">{{user.fullName}}</mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">إضافة مستخدم إلى مجموعة</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="col-lg-5 modal" id="model_UpdateGroup" style="display:none;">
+        <div class="modal-content">
+            <span (click)="closeUpdateGroupModal()" class="close">&times;</span>
+            <div class="card border-0 rounded-lg">
+                <div class="form-control" style="background-color: #f9f9f9;">
+                    <h1 class="modal-h1-header">تعديل بيانات المجموعة</h1>
+                </div>
+                <div class="card-body" *ngIf="!isLoading">
+                    <form #updateGroupForm="ngForm" (ngSubmit)="onUpdateGroup(updateGroupForm)">
+                        <input type="hidden" id="id" name="id" ngModel />
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="name" type="name" name="name" required ngModel />
+                            <label for="name">المجموعة</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="arName" type="arName" name="arName" required ngModel />
+                            <label for="arName">اسم المجموعة</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="description" type="description" name="description" required
+                                ngModel />
+                            <label for="description">وصف المجموعة</label>
+                        </div>
+                        <!-- <div class="form-floating mb-3">                         
+                            <select class="form-control" id="categoryID" type="categoryID" name="categoryID" required
+                                ngModel>
+                                <option class="form-control" *ngFor="let ctg of servicesCategories" [value]="ctg.id">
+                                    {{ctg.name}}</option>
+                            </select>
+                            <label for="categoryID">نوع المجموعة</label>
+                        </div> -->
+                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <button class="btn btn-primary" type="submit">تعديل</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-12 col-md-6 " *ngIf="isLoading" style="text-align: center;">
+                    <br /><br />
+                    <app-loading-spinner></app-loading-spinner>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

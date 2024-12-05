@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Login - SB Admin</title>
+    <link src="../../styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body dir="rtl" style="max-width:100%;max-height: 45rem;background-color:white;background-size: 25%;
+background-image:url('/assets/images/authBG2_.png')
+;background-repeat: no-repeat;float: bottom;">
+
+    <div id="layoutAuthentication" style="width: 100%;">
+        <div id="layoutAuthentication_content" style="width: 100%;">
+            <main>
+
+                <div class="row justify-content-center" style="width: 100%;">
+                    <div class="col-12 row">
+                        <div class="col-3">
+
+                        </div>
+                        <div class="col-6">
+                            <div class="alert alert-danger response-message" *ngIf="errorMessage">
+                                <p>
+                                    {{ errorMessage }}<mat-icon>cancel</mat-icon>
+                                </p>
+                            </div>
+                            <div class="alert alert-success response-message" *ngIf="successMessage">
+
+                                <p>
+                                    {{ successMessage }} <mat-icon>check_circle</mat-icon>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4"
+                        style="vertical-align: middle !important;align-content: right;text-align: right;">
+                        <br /><br /><br /><br />
+                        <div class="row" style="height: 400px;">
+                            <img src="/assets/images/Login.svg"
+                                style="vertical-align:top;background-color: transparent !important;width: 100%;">
+                        </div>
+                    </div>
+                    <div class="col-lg-4" style="vertical-align: middle !important;text-align: center;">
+                        <br /><br /><br /><br />
+                        <div class="card  shadow-lg border-0 rounded-lg mt-5"
+                            style="vertical-align: middle !important;">
+                            <div class="card-header">                                
+                                <h3 class="text-center font-weight-light my-4">تسجيل الدخول</h3>
+                            </div>
+                            <div class="card-body" *ngIf="!isLoading">
+                                <form #authForm="ngForm" (ngSubmit)="onSubmitForm(authForm)">
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" autocomplete="email" id="email" type="email"
+                                            name="email" placeholder="name@example.com" required ngModel />
+                                        <label for="email">البريد الإلكتروني</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <mat-form-field style="float: none;width: 100%;">
+                                            <label for="password" matPrefix>كلمة المرور</label>
+                                            <input matInput class="form-control" id="password"
+                                                [type]="(showPassword === false)?'password':'text'" name="password"
+                                                required minlength="6" ngModel>
+
+
+                                            <mat-icon matSuffix style="cursor: pointer;" (click)="toggleShowPassword()">
+                                                {{!showPassword?'visibility':'visibility_off'}}</mat-icon>
+                                        </mat-form-field>
+                                    </div>
+                                    <!-- <div class="form-check mb-3" style="align-content: right;text-align: right;">
+                                        <div class="row col-12">
+                                            <div class="col-4">
+                                                <input class="form-check-input" id="inputRememberPassword"
+                                                    type="checkbox" value="" />
+                                                <label class="form-check-label" for="inputRememberPassword">تذكر كلمة
+                                                    المرور
+                                                </label>
+                                            </div>
+                                            <div class="col-8">
+
+                                            </div>
+                                        </div>
+
+                                    </div> -->
+                                    <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+
+                                        <button class="btn btn-primary" type="submit" [disabled]="!authForm.valid">تسجيل
+                                            الدخول</button>
+
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xs-12 col-md-6 " *ngIf="isLoading"
+                                style="text-align: center;align-self: center;">
+                                <br /><br />
+                                <app-loading-spinner></app-loading-spinner>
+                            </div>
+                            <div class="card-footer text-center py-3">
+                                <div class="small"><a  routerLink="/registration" routerLinkActive="selectedLink" >تسجيل مستخدم جديد</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4" style="text-align: left;direction: ltr;padding-top: 15%;padding-right: 5%;">
+                        <!-- <span style="font-family: forte;font-size: 64px;color: dodgerblue;vertical-align: middle;text-align: center;">
+                                Flow Fly
+                            </span> -->
+                        <div style="float: right;">
+
+                            <div class="card"
+                                style="border: 1px solid ;border-color: #1673FD;text-align: right;padding: 10px;background-color: transparent;">
+                                <h1
+                                    style="font-family: forte !important;background-color: #1673FD;border-radius: 10px;text-align: center;color: white;padding-bottom: 0px;">
+                                    FlowFly</h1>
+                                موقع خدمات إلكترونية يستطيع المستخدم من خلاله تقديم طلبات ومتابعتها واعتماد مهامه
+                                ويمكّن مدير النظام من إنشاء خدمات إلكترونية جديدة بكل يسر وسهولة و بدون مبرمج
+                                بتقنية <br /><span style="font-weight: bold;">Low-Code No-Code </span><br />
+                                ويمكن الربط مع خدمات إلكترونية خارجية لاستعادة وإرسال البيانات
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script> -->
+</body>
+
+</html>

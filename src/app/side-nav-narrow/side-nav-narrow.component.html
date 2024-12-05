@@ -1,0 +1,70 @@
+<div id="layoutSidenav_nav" style="width: 60px;">
+    <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion"
+        style="margin-top: 10px;margin-right: 5px; border-radius: 10px;width: 60px;padding-top: 5px;">
+
+        <div class="sb-sidenav-menu">
+
+            <div class="nav" *ngIf="isAuthenticated">
+                <div class="sb-sidenav-menu-heading"></div>
+                <a class="nav-link" ngbTooltip="خدماتي" routerLink="/home/my-services" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">public</mat-icon>
+                </a>
+                <a class="nav-link" ngbTooltip="مهامي" routerLink="/home/my-tasks" routerLinkActive="selectedLink">
+
+                    <mat-icon style="margin: 3px;">work</mat-icon>
+
+                </a>
+                <a class="nav-link" ngbTooltip="طلباتي" routerLink="/home/my-requests" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">apps</mat-icon>
+                </a>
+                <a class="nav-link" ngbTooltip="بياناتي" routerLink="/home/my-info" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">info</mat-icon>
+                </a>
+                <a class="nav-link" ngbTooltip="تقارير بيانية" routerLink="/bi-dashboard"
+                    routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">show_chart</mat-icon>
+
+                </a>
+                <a class="nav-link" ngbTooltip="تقارير" routerLink="/services-report" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">dvr</mat-icon>
+                </a>
+
+                <div class="sb-sidenav-menu-heading"> </div>
+
+                <a class="nav-link collapsed" ngbTooltip=" الهيكل التنظيمي" routerLink="/admin-panel/organization-structure"
+                    routerLinkActive="selectedLink" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+                    aria-expanded="false" aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">account_balance</mat-icon>
+                   
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a class="nav-link collapsed" ngbTooltip="إدارة الخدمات" routerLink="/admin-panel/manage-services"
+                    routerLinkActive="selectedLink" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+                    aria-expanded="false" aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">build</mat-icon>
+
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a class="nav-link collapsed" ngbTooltip="إدارة مجموعات الاعتماد"
+                    routerLink="/admin-panel/manage-groups" routerLinkActive="selectedLink" data-bs-toggle="collapse"
+                    data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">group</mat-icon>
+
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a class="nav-link collapsed" ngbTooltip="إدارة مصاد البيانات"
+                    routerLink="/admin-panel/manage-data-sources" routerLinkActive="selectedLink"
+                    data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false"
+                    aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">input</mat-icon>
+
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+
+
+            </div>
+        </div>
+
+
+    </nav>
+</div>

@@ -1,0 +1,118 @@
+<div id="layoutSidenav_nav" style="padding-top: 10px;text-align: right;min-height: 800px;">
+    <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion"
+        style="border-radius: 10px;width: 100%;padding-top: 5px;">
+        <div style="vertical-align:middle;align-self: center;">
+
+            <img [src]="this.personalImageUrl" class="personal-img" style="border-radius:50%;">
+        </div>
+        <br/>
+        <div style="text-align: center;">
+
+            <h3 style="font-weight: bold;font-family: 'bahij';">{{ employeeName}} </h3>
+            <h3 style="font-weight: bold;font-family: 'bahij';color: gray;">{{ jobTitle}} </h3>
+        </div>
+        <div class="sb-sidenav-menu" style="height: 100%;">
+
+            <div class="nav" *ngIf="isAuthenticated">
+                <div class="sb-sidenav-menu-heading">الرئيسية</div>
+
+                <a class="nav-link" routerLink="/home/my-services" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">public</mat-icon>
+                    خدماتي
+
+                </a>
+                <a class="nav-link" routerLink="/home/my-tasks" routerLinkActive="selectedLink">
+
+                    <mat-icon style="margin: 3px;">work</mat-icon>
+                    مهامي
+                    <span *ngIf="awaitingTasksCount>0" matBadgeOverlap="false" matBadgeSize="small" [matBadge]="awaitingTasksCount" matBadgePosition="after" matBadgeColor="warn" >
+                        <br/>
+                        </span>
+                </a>
+                <a class="nav-link" routerLink="/home/my-requests" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">apps</mat-icon>
+                    طلباتي
+                   
+                    <span *ngIf="runningRequestsCount>0" matBadgeOverlap="false" matBadgeSize="small"   [matBadge]="runningRequestsCount" matBadgePosition="after" matBadgeColor="primary" >
+                    <br/>
+                    </span>
+                </a>
+                <a class="nav-link" routerLink="/home/users-directory" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">people</mat-icon>
+                    دليل المستخدمين
+                </a>
+                <a class="nav-link" routerLink="/home/my-info" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">info</mat-icon>
+                    بياناتي
+                </a>
+                <a class="nav-link" routerLink="/home/flowfly" routerLinkActive="selectedLink">
+                    <img style="vertical-align: super;margin: 3px;" src="/assets/icons/CircleLogoNoLeather.png" width="25"  >
+                     FlowFly 
+                </a>
+               
+                <!-- <a class="nav-link" routerLink="/admin-panel/organization-structure" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">dvr</mat-icon>
+                    الهيكل التنظيمي
+                </a> -->
+                <div *ngIf="isAdmin" class="sb-sidenav-menu-heading"> إدارة النظام</div>
+                <a *ngIf="isAdmin" class="nav-link" routerLink="/bi-dashboard" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">show_chart</mat-icon>
+                    تقارير بيانية
+                </a>
+                <a *ngIf="isAdmin" class="nav-link" routerLink="/services-report" routerLinkActive="selectedLink">
+                    <mat-icon style="margin: 3px;">dvr</mat-icon>
+                    التقارير
+                </a>
+                <a *ngIf="isAdmin" class="nav-link collapsed" routerLink="/admin-panel/organization-structure"
+                    routerLinkActive="selectedLink" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+                    aria-expanded="false" aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">account_balance</mat-icon>
+                    الهيكل التنظيمي
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a *ngIf="isAdmin" class="nav-link collapsed" routerLink="/admin-panel/manage-services" routerLinkActive="selectedLink"
+                    data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false"
+                    aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">build</mat-icon>
+                    إدارة الخدمات
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a *ngIf="isAdmin" class="nav-link collapsed" routerLink="/admin-panel/manage-groups" routerLinkActive="selectedLink"
+                    data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false"
+                    aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">group</mat-icon>
+                    إدارة مجموعات الاعتماد
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a *ngIf="isAdmin" class="nav-link collapsed" routerLink="/admin-panel/manage-data-sources"
+                    routerLinkActive="selectedLink" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+                    aria-expanded="false" aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">input</mat-icon>
+                    إدارة مصادر البيانات
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a *ngIf="isAdmin" class="nav-link collapsed" routerLink="/admin-panel/manage-end-points"
+                    routerLinkActive="selectedLink" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+                    aria-expanded="false" aria-controls="collapsePages">
+                    <mat-icon style="margin: 3px;">compare_arrows</mat-icon>
+                    إدارة نقاط الاتصال
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <a *ngIf="isAdmin" class="nav-link collapsed" routerLink="/admin-panel/manage-submit-stages"
+                routerLinkActive="selectedLink" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+                aria-expanded="false" aria-controls="collapsePages">
+                <mat-icon style="margin: 3px;">av_timer</mat-icon>
+                إدارة مراحل الطلبات
+                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+
+
+            </div>
+        </div>
+        <!-- <div style="vertical-align:middle;align-self: center;">
+
+            <img src="/assets/images/tarboosh5.jpg" style="border-radius:5%;max-width: 150px;padding: 10px;">
+        </div> -->
+
+    </nav>
+</div>
